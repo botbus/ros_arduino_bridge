@@ -46,14 +46,9 @@
  *********************************************************************/
 #define USE_BASE
 #define ARDUINO_ENC_COUNTER
-#define BAUDRATE 57600
+#define BAUDRATE 115200
 #define MAX_PWM 255
 #include "Arduino.h"
-// #include "hardware/regs/io_bank0.h" // Register definitions
-// #include "hardware/structs/iobank0.h" // Register structs
-// #include "hardware/irq.h"
-// #include "hardware/gpio.h"
-// #include "pico/multicore.h"
 
 #include "commands.h"
 
@@ -85,7 +80,8 @@ int arg = 0;
 int indx = 0;
 // Variable to hold an input character
 char chr;
-
+bool run_left_ISR{false};
+bool run_right_ISR{false};
 // Variable to hold the current single-character command
 char cmd;
 
@@ -118,7 +114,7 @@ int runCommand()
   int pid_args[4];
   arg1 = atoi(argv1);
   arg2 = atoi(argv2);
-
+  Serial.println("processing command");
   switch (cmd)
   {
   case GET_BAUDRATE:
@@ -229,12 +225,16 @@ void setup()
 }
 void loop()
 {
+  if (run_left_ISR)
+    RUN_PIN_ISR_LEFT();
+  if (run_right_ISR)
+    RUN_PIN_ISR_LEFT();
   while (Serial.available() > 0)
   {
-
+    Serial.print("Got something: ");
     // Read the next character
     chr = Serial.read();
-
+    Serial.println(chr);
     // Terminate a command with a CR
     if (chr == 13)
     {
@@ -288,7 +288,7 @@ void loop()
   // Check to see if we have exceeded the auto-stop interval
   if ((millis() - lastMotorCommand) > AUTO_STOP_INTERVAL)
   {
-    ;
+
     setMotorSpeeds(0, 0);
     moving = 0;
   }
