@@ -59,12 +59,12 @@ static const int ENC_STATES[] = {0, 1, -1, 0, -1, 0, 0, 1, 1, 0, 0, -1, 0, -1, 1
 bool run_left_ISR{false};
 bool run_right_ISR{false};
 
-const int LEFT_ENC_PIN_A{2}; // pin 2
-const int LEFT_ENC_PIN_B {3}; // pin 3
+const int LEFT_ENC_PIN_A{4}; // pin 2
+const int LEFT_ENC_PIN_B {5}; // pin 3
 
 // below can be changed, but should be PORTC pins
-const int RIGHT_ENC_PIN_A {4}; // pin A4
-const int RIGHT_ENC_PIN_B {5}; // pin A5
+const int RIGHT_ENC_PIN_A {2}; // pin A4
+const int RIGHT_ENC_PIN_B {3}; // pin A5
 void initMotorPins()
 {
     pinMode(LEFT_ENC_PIN_A, INPUT_PULLUP);

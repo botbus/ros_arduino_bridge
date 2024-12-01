@@ -11,12 +11,12 @@
 #include "motor_driver.h"
 #include "diff_controller.h"
 
-constexpr int RIGHT_MOTOR_BACKWARD{5};
-constexpr int LEFT_MOTOR_BACKWARD{6};
-constexpr int RIGHT_MOTOR_FORWARD{9};
+constexpr int RIGHT_MOTOR_BACKWARD{7};
+constexpr int LEFT_MOTOR_BACKWARD{9};
+constexpr int RIGHT_MOTOR_FORWARD{8};
 constexpr int LEFT_MOTOR_FORWARD{10};
-constexpr int RIGHT_MOTOR_ENABLE{12};
-constexpr int LEFT_MOTOR_ENABLE{13};
+constexpr int RIGHT_MOTOR_ENABLE{6};
+constexpr int LEFT_MOTOR_ENABLE{11};
 
 // #ifdef POLOLU_VNH5019
 //   /* Include the Pololu library */
