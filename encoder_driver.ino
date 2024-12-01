@@ -96,7 +96,7 @@ void RUN_PIN_ISR_LEFT()
   enc_last |= current_state;
   left_enc_pos += ENC_STATES[(enc_last & 0x0f)];
   run_left_ISR = false;
-  Serial.println("Right ISR run");
+  // Serial.println("Right ISR run");
 }
 void RUN_PIN_ISR_RIGHT()
 {
@@ -108,7 +108,7 @@ void RUN_PIN_ISR_RIGHT()
   enc_last |= current_state;
   left_enc_pos += ENC_STATES[(enc_last & 0x0f)];
   run_right_ISR = false;
-  Serial.println("Right ISR run");
+  // Serial.println("Right ISR run");
 }
 
 /* Wrap the encoder reading function */
