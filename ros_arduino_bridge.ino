@@ -73,7 +73,7 @@ void loop()
 
   while (Serial.available() > 0)
   {
-    Serial.print("Got something: ");
+    // Serial.print("Got something: ");
     // Read the next character
     chr = Serial.read();
     Serial.println(chr);
