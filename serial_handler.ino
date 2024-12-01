@@ -1,4 +1,4 @@
-#include "Arduino.h"
+
 #include "commands.h"
 #include "setup_definitions.h"
 #include "motor_driver.h"

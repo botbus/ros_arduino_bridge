@@ -45,7 +45,6 @@
  *  POSSIBILITY OF SUCH DAMAGE.
  *********************************************************************/
 
-#include "Arduino.h"
 // #include "commands.h"
 #include "setup_definitions.h"
 

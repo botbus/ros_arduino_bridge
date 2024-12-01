@@ -6,7 +6,7 @@
    #define near the top of the main ROSArduinoBridge.ino file.
 
    *************************************************************/
-#include "Arduino.h"
+
 #include "commands.h"
 #include "motor_driver.h"
 #include "diff_controller.h"
