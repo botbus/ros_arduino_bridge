@@ -77,7 +77,49 @@ void loop()
     // Read the next character
     chr = Serial.read();
     Serial.println(chr);
-    handleSerial(chr);
+        // Terminate a command with a CR
+    if (chr == 13)
+    {
+      if (arg == 1)
+        argv1[indx] = '\0';
+      else if (arg == 2)
+        argv2[indx] = '\0';
+      runCommand();
+      resetCommand();
+    }
+    // Use spaces to delimit parts of the command
+    else if (chr == ' ')
+    {
+      // Step through the arguments
+      if (arg == 0)
+        arg = 1;
+      else if (arg == 1)
+      {
+        argv1[indx] = '\0';
+        arg = 2;
+        indx = 0;
+      }
+      continue;
+    }
+    else
+    {
+      if (arg == 0)
+      {
+        // The first arg is the single-letter command
+        cmd = chr;
+      }
+      else if (arg == 1)
+      {
+        // Subsequent arguments can be more than one character
+        argv1[indx] = chr;
+        indx++;
+      }
+      else if (arg == 2)
+      {
+        argv2[indx] = chr;
+        indx++;
+      }
+    }
   }
   if (millis() > nextPID)
   {

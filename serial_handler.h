@@ -21,6 +21,5 @@ extern long arg2;
 
 void resetCommand();
 int runCommand();
-void handleSerial(char chr);
 
 #endif
