@@ -76,7 +76,7 @@ void loop()
     // Serial.print("Got something: ");
     // Read the next character
     chr = Serial.read();
-    Serial.println(chr);
+   
         // Terminate a command with a CR
     if (chr == 13)
     {
