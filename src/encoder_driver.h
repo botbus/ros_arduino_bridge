@@ -1,21 +1,26 @@
 /* *************************************************************
    Encoder driver function definitions - by James Nugen
    ************************************************************ */
-   
-   
 
-  //below can be changed, but should be PORTD pins; 
-  //otherwise additional changes in the code are required
-  #define LEFT_ENC_PIN_A 2  //pin 2
-  #define LEFT_ENC_PIN_B 3  //pin 3
-  
-  //below can be changed, but should be PORTC pins
-  #define RIGHT_ENC_PIN_A 4  //pin A4
-  #define RIGHT_ENC_PIN_B 5   //pin A5
+#ifndef ENCODER_DRIVER_H
+#define ENCODER_DRIVER_H
 
+// below can be changed, but should be PORTD pins;
+// otherwise additional changes in the code are required
+extern const int LEFT_ENC_PIN_A  ; // pin 2
+extern const int LEFT_ENC_PIN_B  ; // pin 3
 
+// below can be changed, but should be PORTC pins
+extern const int RIGHT_ENC_PIN_A ; // pin A4
+extern const int RIGHT_ENC_PIN_B ; // pin A5
 
 long readEncoder(int i);
 void resetEncoder(int i);
 void resetEncoders();
 
+
+void PIN_ISR_LEFT();
+void PIN_ISR_RIGHT();
+void RUN_PIN_ISR_LEFT();
+void RUN_PIN_ISR_RIGHT();
+#endif

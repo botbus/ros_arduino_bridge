@@ -30,7 +30,7 @@
 // #elif defined(ARDUINO_ENC_COUNTER)
 volatile long left_enc_pos = 0L;
 volatile long right_enc_pos = 0L;
-static const int8_t ENC_STATES[] = {0, 1, -1, 0, -1, 0, 0, 1, 1, 0, 0, -1, 0, -1, 1, 0}; // encoder lookup table
+static const int ENC_STATES[] = {0, 1, -1, 0, -1, 0, 0, 1, 1, 0, 0, -1, 0, -1, 1, 0}; // encoder lookup table
 
 // /* Interrupt routine for LEFT encoder, taking care of actual counting */
 // ISR(PCINT2_vect)
@@ -52,7 +52,31 @@ static const int8_t ENC_STATES[] = {0, 1, -1, 0, -1, 0, 0, 1, 1, 0, 0, -1, 0, -1
 
 //   right_enc_pos += ENC_STATES[(enc_last & 0x0f)];
 // }
+#include "Arduino.h"
+#include "commands.h"
+#include "diff_controller.h"
+#include "encoder_driver.h"
+bool run_left_ISR{false};
+bool run_right_ISR{false};
 
+const int LEFT_ENC_PIN_A{2}; // pin 2
+const int LEFT_ENC_PIN_B {3}; // pin 3
+
+// below can be changed, but should be PORTC pins
+const int RIGHT_ENC_PIN_A {4}; // pin A4
+const int RIGHT_ENC_PIN_B {5}; // pin A5
+void initMotorPins()
+{
+    pinMode(LEFT_ENC_PIN_A, INPUT_PULLUP);
+  pinMode(RIGHT_ENC_PIN_A, INPUT_PULLUP);
+  pinMode(LEFT_ENC_PIN_B, INPUT_PULLUP);
+  pinMode(RIGHT_ENC_PIN_B, INPUT_PULLUP);
+
+  attachInterrupt(digitalPinToInterrupt(LEFT_ENC_PIN_A), PIN_ISR_LEFT, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(RIGHT_ENC_PIN_A), PIN_ISR_RIGHT, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(LEFT_ENC_PIN_B), PIN_ISR_LEFT, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(RIGHT_ENC_PIN_B), PIN_ISR_RIGHT, CHANGE);
+}
 void PIN_ISR_LEFT()
 {
   run_left_ISR = true;

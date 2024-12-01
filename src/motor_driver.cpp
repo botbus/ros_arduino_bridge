@@ -1,19 +1,30 @@
 /***************************************************************
    Motor driver definitions
-   
+
    Add a "#elif defined" block to this file to include support
    for a particular motor driver.  Then add the appropriate
    #define near the top of the main ROSArduinoBridge.ino file.
-   
+
    *************************************************************/
-   
+#include "Arduino.h"
+#include "commands.h"
+#include "motor_driver.h"
+#include "diff_controller.h"
+
+constexpr int RIGHT_MOTOR_BACKWARD{5};
+constexpr int LEFT_MOTOR_BACKWARD{6};
+constexpr int RIGHT_MOTOR_FORWARD{9};
+constexpr int LEFT_MOTOR_FORWARD{10};
+constexpr int RIGHT_MOTOR_ENABLE{12};
+constexpr int LEFT_MOTOR_ENABLE{13};
+
 // #ifdef POLOLU_VNH5019
 //   /* Include the Pololu library */
 //   #include "DualVNH5019MotorShield.h"
 
 //   /* Create the motor driver object */
 //   DualVNH5019MotorShield drive;
-  
+
 //   /* Wrap the motor driver initialization */
 //   void initMotorController() {
 //     drive.init();
@@ -36,7 +47,7 @@
 
 //   /* Create the motor driver object */
 //   DualMC33926MotorShield drive;
-  
+
 //   /* Wrap the motor driver initialization */
 //   void initMotorController() {
 //     drive.init();
@@ -54,35 +65,56 @@
 //     setMotorSpeed(RIGHT, rightSpeed);
 //   }
 // #elif defined L298_MOTOR_DRIVER
-  void initMotorController() {
-    digitalWrite(RIGHT_MOTOR_ENABLE, HIGH);
-    digitalWrite(LEFT_MOTOR_ENABLE, HIGH);
+void initMotorController()
+{
+  digitalWrite(RIGHT_MOTOR_ENABLE, HIGH);
+  digitalWrite(LEFT_MOTOR_ENABLE, HIGH);
+}
+
+void setMotorSpeed(int i, int spd)
+{
+  unsigned char reverse = 0;
+
+  if (spd < 0)
+  {
+    spd = -spd;
+    reverse = 1;
   }
-  
-  void setMotorSpeed(int i, int spd) {
-    unsigned char reverse = 0;
-  
-    if (spd < 0)
+  if (spd > 255)
+    spd = 255;
+
+  if (i == LEFT)
+  {
+    if (reverse == 0)
     {
-      spd = -spd;
-      reverse = 1;
+      analogWrite(LEFT_MOTOR_FORWARD, spd);
+      analogWrite(LEFT_MOTOR_BACKWARD, 0);
     }
-    if (spd > 255)
-      spd = 255;
-    
-    if (i == LEFT) { 
-      if      (reverse == 0) { analogWrite(LEFT_MOTOR_FORWARD, spd); analogWrite(LEFT_MOTOR_BACKWARD, 0); }
-      else if (reverse == 1) { analogWrite(LEFT_MOTOR_BACKWARD, spd); analogWrite(LEFT_MOTOR_FORWARD, 0); }
-    }
-    else /*if (i == RIGHT) //no need for condition*/ {
-      if      (reverse == 0) { analogWrite(RIGHT_MOTOR_FORWARD, spd); analogWrite(RIGHT_MOTOR_BACKWARD, 0); }
-      else if (reverse == 1) { analogWrite(RIGHT_MOTOR_BACKWARD, spd); analogWrite(RIGHT_MOTOR_FORWARD, 0); }
+    else if (reverse == 1)
+    {
+      analogWrite(LEFT_MOTOR_BACKWARD, spd);
+      analogWrite(LEFT_MOTOR_FORWARD, 0);
     }
   }
-  
-  void setMotorSpeeds(int leftSpeed, int rightSpeed) {
-    setMotorSpeed(LEFT, leftSpeed);
-    setMotorSpeed(RIGHT, rightSpeed);
+  else /*if (i == RIGHT) //no need for condition*/
+  {
+    if (reverse == 0)
+    {
+      analogWrite(RIGHT_MOTOR_FORWARD, spd);
+      analogWrite(RIGHT_MOTOR_BACKWARD, 0);
+    }
+    else if (reverse == 1)
+    {
+      analogWrite(RIGHT_MOTOR_BACKWARD, spd);
+      analogWrite(RIGHT_MOTOR_FORWARD, 0);
+    }
   }
+}
+
+void setMotorSpeeds(int leftSpeed, int rightSpeed)
+{
+  setMotorSpeed(LEFT, leftSpeed);
+  setMotorSpeed(RIGHT, rightSpeed);
+}
 
 // #endif

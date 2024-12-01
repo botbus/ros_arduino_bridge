@@ -2,15 +2,17 @@
    Motor driver function definitions - by James Nugen
    *************************************************************/
 
-// #ifdef L298_MOTOR_DRIVER
-  #define RIGHT_MOTOR_BACKWARD 5
-  #define LEFT_MOTOR_BACKWARD  6
-  #define RIGHT_MOTOR_FORWARD  9
-  #define LEFT_MOTOR_FORWARD   10
-  #define RIGHT_MOTOR_ENABLE 12
-  #define LEFT_MOTOR_ENABLE 13
-// #endif
+#ifndef MOTOR_DRIVER_H
+#define MOTOR_DRIVER_H
+extern const int RIGHT_MOTOR_BACKWARD;
+extern const int LEFT_MOTOR_BACKWARD;
+extern const int RIGHT_MOTOR_FORWARD;
+extern const int LEFT_MOTOR_FORWARD;
+extern const int RIGHT_MOTOR_ENABLE;
+extern const int LEFT_MOTOR_ENABLE;
 
 void initMotorController();
 void setMotorSpeed(int i, int spd);
 void setMotorSpeeds(int leftSpeed, int rightSpeed);
+
+#endif
