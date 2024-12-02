@@ -40,7 +40,7 @@ int runCommand()
   int pid_args[4];
   arg1 = atoi(argv1);
   arg2 = atoi(argv2);
-  // Serial.println("processing command");
+
   switch (cmd)
   {
   case GET_BAUDRATE:

@@ -1,5 +1,5 @@
 #include "include/imu_handler.h"
-
+// char IMUBuffer[500];
 void initIMU() {
   SPI_PORT.setSCK(SCK_PIN);
   SPI_PORT.setMOSI(MOSI_PIN);
@@ -23,63 +23,63 @@ void initIMU() {
 
 // Below here are some helper functions to print the data nicely!
 
-void printPaddedInt16b(int16_t val) {
-  if (val > 0) {
-    Serial.print(" ");
-    if (val < 10000) {
-      Serial.print("0");
-    }
-    if (val < 1000) {
-      Serial.print("0");
-    }
-    if (val < 100) {
-      Serial.print("0");
-    }
-    if (val < 10) {
-      Serial.print("0");
-    }
-  } else {
-    Serial.print("-");
-    if (abs(val) < 10000) {
-      Serial.print("0");
-    }
-    if (abs(val) < 1000) {
-      Serial.print("0");
-    }
-    if (abs(val) < 100) {
-      Serial.print("0");
-    }
-    if (abs(val) < 10) {
-      Serial.print("0");
-    }
-  }
-  Serial.print(abs(val));
-}
+// void printPaddedInt16b(int16_t val) {
+//   if (val > 0) {
+//     Serial.print(" ");
+//     if (val < 10000) {
+//       Serial.print("0");
+//     }
+//     if (val < 1000) {
+//       Serial.print("0");
+//     }
+//     if (val < 100) {
+//       Serial.print("0");
+//     }
+//     if (val < 10) {
+//       Serial.print("0");
+//     }
+//   } else {
+//     Serial.print("-");
+//     if (abs(val) < 10000) {
+//       Serial.print("0");
+//     }
+//     if (abs(val) < 1000) {
+//       Serial.print("0");
+//     }
+//     if (abs(val) < 100) {
+//       Serial.print("0");
+//     }
+//     if (abs(val) < 10) {
+//       Serial.print("0");
+//     }
+//   }
+//   Serial.print(abs(val));
+// }
 
-void printRawAGMT(ICM_20948_AGMT_t agmt) {
-  Serial.print("RAW. Acc [ ");
-  printPaddedInt16b(agmt.acc.axes.x);
-  Serial.print(", ");
-  printPaddedInt16b(agmt.acc.axes.y);
-  Serial.print(", ");
-  printPaddedInt16b(agmt.acc.axes.z);
-  Serial.print(" ], Gyr [ ");
-  printPaddedInt16b(agmt.gyr.axes.x);
-  Serial.print(", ");
-  printPaddedInt16b(agmt.gyr.axes.y);
-  Serial.print(", ");
-  printPaddedInt16b(agmt.gyr.axes.z);
-  Serial.print(" ], Mag [ ");
-  printPaddedInt16b(agmt.mag.axes.x);
-  Serial.print(", ");
-  printPaddedInt16b(agmt.mag.axes.y);
-  Serial.print(", ");
-  printPaddedInt16b(agmt.mag.axes.z);
-  Serial.print(" ], Tmp [ ");
-  printPaddedInt16b(agmt.tmp.val);
-  Serial.print(" ]");
-  Serial.println();
-}
+// void printRawAGMT(ICM_20948_AGMT_t agmt) {
+//   Serial.print("RAW. Acc [ ");
+//   printPaddedInt16b(agmt.acc.axes.x);
+//   Serial.print(", ");
+//   printPaddedInt16b(agmt.acc.axes.y);
+//   Serial.print(", ");
+//   printPaddedInt16b(agmt.acc.axes.z);
+//   Serial.print(" ], Gyr [ ");
+//   printPaddedInt16b(agmt.gyr.axes.x);
+//   Serial.print(", ");
+//   printPaddedInt16b(agmt.gyr.axes.y);
+//   Serial.print(", ");
+//   printPaddedInt16b(agmt.gyr.axes.z);
+//   Serial.print(" ], Mag [ ");
+//   printPaddedInt16b(agmt.mag.axes.x);
+//   Serial.print(", ");
+//   printPaddedInt16b(agmt.mag.axes.y);
+//   Serial.print(", ");
+//   printPaddedInt16b(agmt.mag.axes.z);
+//   Serial.print(" ], Tmp [ ");
+//   printPaddedInt16b(agmt.tmp.val);
+//   Serial.print(" ]");
+//   Serial.println();
+// }
 
 void printFormattedFloat(float val, uint8_t leading, uint8_t decimals) {
   float aval = abs(val);
@@ -137,12 +137,17 @@ void printScaledAGMT(ICM_20948_SPI *sensor) {
 }
 
 
-void readIMU() {
+void readIMU(const TickType_t & xDelay) {
   if (myICM.dataReady()) {
-    myICM.getAGMT();          // The values are only updated when you call 'getAGMT'
-                              //    printRawAGMT( myICM.agmt );     // Uncomment this to see the raw values, taken directly from the agmt structure
-    printScaledAGMT(&myICM);  // This function takes into account the scale settings from when the measurement was made to calculate the values with units
-    delay(30);
+    myICM.getAGMT();
+    // IMUBuffer = '\0';
+    xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY);
+    // if (xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY) == pdTRUE) {
+    printScaledAGMT(&myICM);
+    xSemaphoreGive(xSemaphore);
+    vTaskDelay(xDelay);
+    // }
+ 
   } else {
     Serial.println("Waiting for data");
     delay(500);
