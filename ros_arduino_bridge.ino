@@ -46,12 +46,13 @@
  *********************************************************************/
 
 // #include "commands.h"
-#include "setup_definitions.h"
+#include "include/imu_handler.h"
+#include "include/setup_definitions.h"
 
-#include "diff_controller.h"
-#include "serial_handler.h"
-#include "motor_driver.h"
-#include "encoder_driver.h"
+#include "include/diff_controller.h"
+#include "include/serial_handler.h"
+#include "include/motor_driver.h"
+#include "include/encoder_driver.h"
 unsigned long nextPID = PID_INTERVAL;
 
 /* Setup function--runs once at startup. */
@@ -64,6 +65,20 @@ void setup()
   initMotorController();
   resetPID();
 }
+
+
+
+void setup1() {
+  while (!Serial)
+    ;
+  initIMU();
+}
+
+void loop1() {
+
+  readIMU();
+}
+
 void loop()
 {
   if (run_left_ISR)

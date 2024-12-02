@@ -1,10 +1,10 @@
 
-#include "commands.h"
-#include "setup_definitions.h"
-#include "motor_driver.h"
-#include "diff_controller.h"
-#include "encoder_driver.h"
-#include "serial_handler.h"
+#include "include/commands.h"
+#include "include/setup_definitions.h"
+#include "include/motor_driver.h"
+#include "include/diff_controller.h"
+#include "include/encoder_driver.h"
+#include "include/serial_handler.h"
 char cmd;
 // A pair of varibles to help parse serial commands (thanks Fergs)
 int arg = 0;

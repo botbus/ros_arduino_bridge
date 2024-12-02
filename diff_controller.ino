@@ -4,11 +4,11 @@
    
    http://vanadium-ros-pkg.googlecode.com/svn/trunk/arbotix/
 */
-#include "commands.h"
-#include "encoder_driver.h"
-#include "motor_driver.h"
-#include "diff_controller.h"
-#include "setup_definitions.h"
+#include "include/commands.h"
+#include "include/encoder_driver.h"
+#include "include/motor_driver.h"
+#include "include/diff_controller.h"
+#include "include/setup_definitions.h"
 /* PID Parameters */
 int Kp = 20;
 int Kd = 12;

@@ -7,9 +7,9 @@
 
    *************************************************************/
 
-#include "commands.h"
-#include "motor_driver.h"
-#include "diff_controller.h"
+#include "include/commands.h"
+#include "include/motor_driver.h"
+#include "include/diff_controller.h"
 
 constexpr int RIGHT_MOTOR_BACKWARD{7};
 constexpr int LEFT_MOTOR_BACKWARD{9};
