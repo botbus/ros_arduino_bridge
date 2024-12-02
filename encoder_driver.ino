@@ -63,8 +63,8 @@ const int LEFT_ENC_PIN_A{ 5 };  // pin 2
 const int LEFT_ENC_PIN_B{ 4 };  // pin 3
 
 // below can be changed, but should be PORTC pins
-const int RIGHT_ENC_PIN_A{ 3 };  // pin A4
-const int RIGHT_ENC_PIN_B{ 2 };  // pin A5
+const int RIGHT_ENC_PIN_A{ 2 };  // pin A4
+const int RIGHT_ENC_PIN_B{ 3 };  // pin A5
 void initMotorPins() {
   pinMode(LEFT_ENC_PIN_A, INPUT_PULLUP);
   pinMode(RIGHT_ENC_PIN_A, INPUT_PULLUP);
@@ -84,6 +84,7 @@ void PIN_ISR_RIGHT() {
 }
 
 void RUN_PIN_ISR_LEFT() {
+noInterrupts();  // Disable interrupts
   static uint8_t enc_last = 0;
 
   enc_last <<= 2;
@@ -92,18 +93,21 @@ void RUN_PIN_ISR_LEFT() {
   enc_last |= current_state;
   left_enc_pos += ENC_STATES[(enc_last & 0x0f)];
   run_left_ISR = false;
-  // Serial.println("Right ISR run");
+   Serial.println("LEFT  RUNNING");
+interrupts(); 
 }
 void RUN_PIN_ISR_RIGHT() {
+noInterrupts();
   static uint8_t r_enc_last = 0;
 
   r_enc_last <<= 2;
 
   uint8_t current_state = (digitalRead(RIGHT_ENC_PIN_A) << 1) | digitalRead(RIGHT_ENC_PIN_B);
-  enc_last |= current_state;
-  right_enc_pos += ENC_STATES[(enc_last & 0x0f)];
+ r_enc_last |= current_state;
+  right_enc_pos += ENC_STATES[(r_enc_last & 0x0f)];
   run_right_ISR = false;
-  // Serial.println("Right ISR run");
+   Serial.println("RIGHT RUNNING");
+interrupts();
 }
 
 /* Wrap the encoder reading function */

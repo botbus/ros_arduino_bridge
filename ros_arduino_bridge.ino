@@ -134,10 +134,11 @@ void motor_driver(void *pvParameters) {
   resetPID();
   delay(100);
   while (1) {
-    if (run_left_ISR)
-      RUN_PIN_ISR_LEFT();
     if (run_right_ISR)
       RUN_PIN_ISR_RIGHT();
+    if (run_left_ISR)
+      RUN_PIN_ISR_LEFT();
+
 //Serial.println("Reading motor driver");
     if (xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY) == pdTRUE) {
       while (Serial.available() > 0) {
