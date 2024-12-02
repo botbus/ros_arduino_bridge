@@ -63,8 +63,8 @@ const int LEFT_ENC_PIN_A{ 4 };  // pin 2
 const int LEFT_ENC_PIN_B{ 5 };  // pin 3
 
 // below can be changed, but should be PORTC pins
-const int RIGHT_ENC_PIN_A{ 2 };  // pin A4
-const int RIGHT_ENC_PIN_B{ 3 };  // pin A5
+const int RIGHT_ENC_PIN_A{ 3 };  // pin A4
+const int RIGHT_ENC_PIN_B{ 2 };  // pin A5
 void initMotorPins() {
   pinMode(LEFT_ENC_PIN_A, INPUT_PULLUP);
   pinMode(RIGHT_ENC_PIN_A, INPUT_PULLUP);
