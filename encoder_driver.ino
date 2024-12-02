@@ -59,8 +59,8 @@ static const int ENC_STATES[] = { 0, 1, -1, 0, -1, 0, 0, 1, 1, 0, 0, -1, 0, -1, 
 bool run_left_ISR{ false };
 bool run_right_ISR{ false };
 
-const int LEFT_ENC_PIN_A{ 5 };  // pin 2
-const int LEFT_ENC_PIN_B{ 4 };  // pin 3
+const int LEFT_ENC_PIN_A{ 4 };  // pin 2
+const int LEFT_ENC_PIN_B{ 5 };  // pin 3
 
 // below can be changed, but should be PORTC pins
 const int RIGHT_ENC_PIN_A{ 3 };  // pin A4
@@ -95,13 +95,13 @@ void RUN_PIN_ISR_LEFT() {
   // Serial.println("Right ISR run");
 }
 void RUN_PIN_ISR_RIGHT() {
-  static uint8_t enc_last = 0;
+  static uint8_t r_enc_last = 0;
 
-  enc_last <<= 2;
+  r_enc_last <<= 2;
 
   uint8_t current_state = (digitalRead(RIGHT_ENC_PIN_A) << 1) | digitalRead(RIGHT_ENC_PIN_B);
   enc_last |= current_state;
-  left_enc_pos += ENC_STATES[(enc_last & 0x0f)];
+  right_enc_pos += ENC_STATES[(enc_last & 0x0f)];
   run_right_ISR = false;
   // Serial.println("Right ISR run");
 }
