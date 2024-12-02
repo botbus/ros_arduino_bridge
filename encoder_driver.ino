@@ -59,8 +59,8 @@ static const int ENC_STATES[] = { 0, 1, -1, 0, -1, 0, 0, 1, 1, 0, 0, -1, 0, -1, 
 bool run_left_ISR{ false };
 bool run_right_ISR{ false };
 
-const int LEFT_ENC_PIN_A{ 4 };  // pin 2
-const int LEFT_ENC_PIN_B{ 5 };  // pin 3
+const int LEFT_ENC_PIN_A{ 5 };  // pin 2
+const int LEFT_ENC_PIN_B{ 4 };  // pin 3
 
 // below can be changed, but should be PORTC pins
 const int RIGHT_ENC_PIN_A{ 3 };  // pin A4
