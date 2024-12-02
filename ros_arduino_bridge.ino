@@ -116,9 +116,11 @@ void imu_driver(void *pvParameters) {
   const TickType_t xDelay = 3 / portTICK_PERIOD_MS;
   delay(100);
   while (1)
-  {Serial.println("reading imu");
-    readIMU(xDelay);
-  }}
+  {//Serial.println("reading imu");
+  //  readIMU(xDelay);
+  
+  }
+}
 void loop() {
   // Serial.println("asd");
 }
@@ -136,7 +138,7 @@ void motor_driver(void *pvParameters) {
       RUN_PIN_ISR_LEFT();
     if (run_right_ISR)
       RUN_PIN_ISR_LEFT();
-Serial.println("Reading motor driver");
+//Serial.println("Reading motor driver");
     if (xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY) == pdTRUE) {
       while (Serial.available() > 0) {
         // Read the next character
@@ -182,10 +184,10 @@ Serial.println("Reading motor driver");
         updatePID();
         nextPID += PID_INTERVAL;
       }
-      if ((millis() - lastMotorCommand) > AUTO_STOP_INTERVAL) {
-        setMotorSpeeds(0, 0);
-        moving = 0;
-      }
+//      if ((millis() - lastMotorCommand) > AUTO_STOP_INTERVAL) {
+  //      setMotorSpeeds(0, 0);
+     //   moving = 0;
+   //   }
 
       xSemaphoreGive(xSemaphore);
       vTaskDelay(yDelay);
