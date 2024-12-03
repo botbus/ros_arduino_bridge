@@ -142,7 +142,7 @@ void RUN_PIN_ISR_RIGHT(void *pvParameters)
     if (run_right_ISR)
     {
 
-      if (xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY) == pdTRUE)
+      if (xSemaphoreTake(xSemaphoreENC, (TickType_t)portMAX_DELAY) == pdTRUE)
       {
         noInterrupts();
         // xSemaphoreTake(xSemaphoreENC, (TickType_t)portMAX_DELAY);
