@@ -155,7 +155,8 @@ void motor_driver(void *pvParameters)
 
     // Serial.println("Reading motor driver");
     if (xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY) == pdTRUE)
-    // {  if (run_right_ISR)
+    {  
+      // if (run_right_ISR)
           // Serial.println("Active");
           Serial.print(run_right_ISR);
           Serial.print("     ");
