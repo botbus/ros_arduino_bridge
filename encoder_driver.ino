@@ -97,8 +97,8 @@ void RUN_PIN_ISR_LEFT(void *pvParameters)
     if (run_left_ISR)
     {
       noInterrupts(); // Disable interrupts
-      if (xSemaphoreTake(xSemaphoreENC, (TickType_t)portMAX_DELAY) == pdTRUE)
-      {
+      // if (xSemaphoreTake(xSemaphoreENC, (TickType_t)portMAX_DELAY) == pdTRUE)
+      // {
         // xSemaphoreTake(xSemaphoreENC, (TickType_t)portMAX_DELAY);
         static uint8_t enc_last = 0;
         enc_last <<= 2;
@@ -106,15 +106,15 @@ void RUN_PIN_ISR_LEFT(void *pvParameters)
         enc_last |= current_state;
         left_enc_pos += ENC_STATES[(enc_last & 0x0f)];
         run_left_ISR = false;
-        Serial.print("LEFT A: ");
+        Serial.print("LEFT A:  ");
         Serial.print(digitalRead(LEFT_ENC_PIN_A));
-        Serial.print(" LEFT B: ");
+        Serial.print(" LEFT B:  ");
         Serial.println(digitalRead(LEFT_ENC_PIN_B));
 
         interrupts();
-        xSemaphoreGive(xSemaphoreENC);
+        // xSemaphoreGive(xSemaphoreENC);
         delay(1);
-      }
+      // }
     }
   }
 }
@@ -130,8 +130,8 @@ void RUN_PIN_ISR_RIGHT(void *pvParameters)
     {
       noInterrupts();
 
-      if (xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY) == pdTRUE)
-      {
+      // if (xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY) == pdTRUE)
+      // {
         // xSemaphoreTake(xSemaphoreENC, (TickType_t)portMAX_DELAY);
         static uint8_t r_enc_last = 0;
 
@@ -142,14 +142,14 @@ void RUN_PIN_ISR_RIGHT(void *pvParameters)
         right_enc_pos += ENC_STATES[(r_enc_last & 0x0f)];
         run_right_ISR = false;
         // Serial.println("RIGHT RUNNING");
-        Serial.print("RIGT A: ");
+        Serial.print("RIGHT A: ");
         Serial.print(digitalRead(RIGHT_ENC_PIN_A));
-        Serial.print(" RIGT B: ");
+        Serial.print(" RIGHT B: ");
         Serial.println(digitalRead(RIGHT_ENC_PIN_B));
         interrupts();
-        xSemaphoreGive(xSemaphoreENC);
+        // xSemaphoreGive(xSemaphoreENC);
         delay(1);
-      }
+      // }
     }
   }
 }
