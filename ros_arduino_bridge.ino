@@ -101,10 +101,10 @@ void setup()
   xSemaphoreENC = xSemaphoreCreateMutexStatic(&xMutexBufferENC);
 
   motorTask = xTaskCreateStatic(motor_driver, "motor_driver", STACK_SIZE, NULL, configMAX_PRIORITIES - 2, xStack_motor, &xTaskBuffer_motor);
-  vTaskCoreAffinitySet(motorTask, 1 << 0); // Core 0
+  vTaskCoreAffinitySet(motorTask, 1 << 1); // Core 0
 
   imuTask = xTaskCreateStatic(imu_driver, "imu_driver", STACK_SIZE, NULL, configMAX_PRIORITIES - 2, xStack_imu, &xTaskBuffer_imu);
-  vTaskCoreAffinitySet(imuTask, 1 << 0); // Core 1
+  vTaskCoreAffinitySet(imuTask, 1 << 1); // Core 1
 
   leftENCTask = xTaskCreateStatic(RUN_PIN_ISR_LEFT, "leftENC", STACK_SIZE, NULL, configMAX_PRIORITIES - 1, xStack_leftENC, &xTaskBuffer_leftENC);
   vTaskCoreAffinitySet(leftENCTask, 1 << 0); // Core 0
