@@ -21,6 +21,6 @@ void resetEncoders();
 
 void PIN_ISR_LEFT();
 void PIN_ISR_RIGHT();
-void RUN_PIN_ISR_LEFT();
-void RUN_PIN_ISR_RIGHT();
+// void RUN_PIN_ISR_LEFT();
+// void RUN_PIN_ISR_RIGHT();
 #endif

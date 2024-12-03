@@ -96,6 +96,7 @@ void RUN_PIN_ISR_LEFT(void *pvParameters)
   {
     if (run_left_ISR)
     {
+      run_left_ISR = false;
       noInterrupts(); // Disable interrupts
       // if (xSemaphoreTake(xSemaphoreENC, (TickType_t)portMAX_DELAY) == pdTRUE)
       // {
@@ -105,7 +106,7 @@ void RUN_PIN_ISR_LEFT(void *pvParameters)
         uint8_t current_state = (digitalRead(LEFT_ENC_PIN_A) << 1) | digitalRead(LEFT_ENC_PIN_B);
         enc_last |= current_state;
         left_enc_pos += ENC_STATES[(enc_last & 0x0f)];
-        run_left_ISR = false;
+        
         Serial.print("LEFT A:  ");
         Serial.print(digitalRead(LEFT_ENC_PIN_A));
         Serial.print(" LEFT B:  ");
