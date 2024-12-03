@@ -99,7 +99,7 @@ void RUN_PIN_ISR_LEFT()
   run_left_ISR = false;
   Serial.print("LEFT A: ");
   Serial.print(digitalRead(LEFT_ENC_PIN_A));
-  Serial.print("LEFT B: ");
+  Serial.print(" LEFT B: ");
   Serial.println(digitalRead(LEFT_ENC_PIN_B));
 
   interrupts();
@@ -118,7 +118,7 @@ void RUN_PIN_ISR_RIGHT()
   // Serial.println("RIGHT RUNNING");
    Serial.print("RIGT A: ");
   Serial.print(digitalRead(RIGHT_ENC_PIN_A));
-  Serial.print("RIGT B: ");
+  Serial.print(" RIGT B: ");
   Serial.println(digitalRead(RIGHT_ENC_PIN_B));
   interrupts();
 }
