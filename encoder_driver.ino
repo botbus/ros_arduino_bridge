@@ -93,7 +93,7 @@ noInterrupts();  // Disable interrupts
   enc_last |= current_state;
   left_enc_pos += ENC_STATES[(enc_last & 0x0f)];
   run_left_ISR = false;
-   Serial.println("LEFT  RUNNING");
+//   Serial.println("LEFT  RUNNING");
 interrupts(); 
 }
 void RUN_PIN_ISR_RIGHT() {
@@ -106,7 +106,7 @@ noInterrupts();
  r_enc_last |= current_state;
   right_enc_pos += ENC_STATES[(r_enc_last & 0x0f)];
   run_right_ISR = false;
-   Serial.println("RIGHT RUNNING");
+  // Serial.println("RIGHT RUNNING");
 interrupts();
 }
 
