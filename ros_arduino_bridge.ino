@@ -70,17 +70,24 @@ unsigned long nextPID = PID_INTERVAL;
 /* Structure that will hold the TCB of the task being created. */
 StaticTask_t xTaskBuffer_imu;
 StaticTask_t xTaskBuffer_motor;
+StaticTask_t xTaskBuffer_leftENC;
+StaticTask_t xTaskBuffer_rightENC;
 
 /* Buffer that the task being created will use as its stack.  Note this is
   an array of StackType_t variables.  The size of StackType_t is dependent on
   the RTOS port. */
 StackType_t xStack_imu[STACK_SIZE];
 StackType_t xStack_motor[STACK_SIZE];
+StackType_t xStack_leftENC[STACK_SIZE];
+StackType_t xStack_rightENC[STACK_SIZE];
 
 SemaphoreHandle_t xSemaphore = NULL;
 StaticSemaphore_t xMutexBuffer;
 
-TaskHandle_t motorTask, imuTask;
+SemaphoreHandle_t xSemaphoreENC = NULL;
+StaticSemaphore_t xMutexBufferENC;
+
+TaskHandle_t motorTask, imuTask, leftENCTask, rightENCTask;
 
 /* Setup function--runs once at startup. */
 void setup() {
@@ -93,12 +100,19 @@ void setup() {
   initMotorPins();
   // xSemaphore = xSemaphoreCreateMutexStatic(&xMutexVuffer);
   xSemaphore = xSemaphoreCreateMutexStatic(&xMutexBuffer);
+    xSemaphoreENC = xSemaphoreCreateMutexStatic(&xMutexBufferENC);
 
   motorTask = xTaskCreateStatic(motor_driver, "motor_driver", STACK_SIZE, NULL, configMAX_PRIORITIES - 1, xStack_motor, &xTaskBuffer_motor);
   vTaskCoreAffinitySet(motorTask, 1 << 0);  // Core 0
 
   imuTask = xTaskCreateStatic(imu_driver, "imu_driver", STACK_SIZE, NULL, configMAX_PRIORITIES - 1, xStack_imu, &xTaskBuffer_imu);
-  vTaskCoreAffinitySet(imuTask, 1 << 1);  // Core 1
+  vTaskCoreAffinitySet(imuTask, 1 << 0);  // Core 1
+
+    leftENCTask = xTaskCreateStatic(RUN_PIN_ISR_LEFT, "leftENC", STACK_SIZE, NULL, configMAX_PRIORITIES - 1, xStack_leftENC, &xTaskBuffer_leftENC);
+  vTaskCoreAffinitySet(leftENCTask, 1 << 1);  // Core 0
+
+    rightENCTask = xTaskCreateStatic(RUN_PIN_ISR_RIGHT, "rightENC", STACK_SIZE, NULL, configMAX_PRIORITIES - 1, xStack_rightENC, &xTaskBuffer_rightENC);
+  vTaskCoreAffinitySet(rightENCTask, 1 << 1);  // Core 0
 }
 
 
@@ -135,10 +149,10 @@ void motor_driver(void *pvParameters) {
   resetPID();
   delay(100);
   while (1) {
-    if (run_right_ISR)
-      RUN_PIN_ISR_RIGHT();
-    if (run_left_ISR)
-     RUN_PIN_ISR_LEFT();
+    // if (run_right_ISR)
+    //   RUN_PIN_ISR_RIGHT();
+    // if (run_left_ISR)
+    //  RUN_PIN_ISR_LEFT();
 
 //Serial.println("Reading motor driver");
     if (xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY) == pdTRUE) {
