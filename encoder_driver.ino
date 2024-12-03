@@ -31,7 +31,7 @@
 volatile long left_enc_pos = 0L;
 volatile long right_enc_pos = 0L;
 static const int ENC_STATES[] = {0, 1, -1, 0, -1, 0, 0, 1, 1, 0, 0, -1, 0, -1, 1, 0}; // encoder lookup table
-
+const TickType_t ENCDelay = 3 / portTICK_PERIOD_MS;
 // /* Interrupt routine for LEFT encoder, taking care of actual counting */
 // ISR(PCINT2_vect)
 // {
@@ -93,31 +93,33 @@ void RUN_PIN_ISR_LEFT(void *pvParameters)
   Serial.println("started LEFT ENC TASK");
   xSemaphoreGive(xSemaphore);
   while (1)
-  {      xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY);
-  Serial.println("inside LEFT ENC TASK");
-  xSemaphoreGive(xSemaphore);
+  {
+      xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY);
+    Serial.println("inside LEFT ENC TASK");
+    xSemaphoreGive(xSemaphore);
     if (run_left_ISR)
     {
       run_left_ISR = false;
       noInterrupts(); // Disable interrupts
-      // if (xSemaphoreTake(xSemaphoreENC, (TickType_t)portMAX_DELAY) == pdTRUE)
-      // {
+      if (xSemaphoreTake(xSemaphoreENC, (TickType_t)portMAX_DELAY) == pdTRUE)
+      {
         // xSemaphoreTake(xSemaphoreENC, (TickType_t)portMAX_DELAY);
         static uint8_t enc_last = 0;
         enc_last <<= 2;
         uint8_t current_state = (digitalRead(LEFT_ENC_PIN_A) << 1) | digitalRead(LEFT_ENC_PIN_B);
         enc_last |= current_state;
         left_enc_pos += ENC_STATES[(enc_last & 0x0f)];
-        
+
         Serial.print("LEFT A:  ");
         Serial.print(digitalRead(LEFT_ENC_PIN_A));
         Serial.print(" LEFT B:  ");
         Serial.println(digitalRead(LEFT_ENC_PIN_B));
 
         interrupts();
-        // xSemaphoreGive(xSemaphoreENC);
-        delay(1);
-      // }
+        xSemaphoreGive(xSemaphoreENC);
+        // delay(1);
+        vTaskDelay(ENCDelay);
+      }
     }
   }
 }
@@ -129,15 +131,15 @@ void RUN_PIN_ISR_RIGHT(void *pvParameters)
   xSemaphoreGive(xSemaphore);
   while (1)
   {
-      xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY);
-  Serial.println("inside RIGHT ENC TASK");
-  xSemaphoreGive(xSemaphore);
+        xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY);
+    Serial.println("inside RIGHT ENC TASK");
+    xSemaphoreGive(xSemaphore);
     if (run_right_ISR)
     {
-      noInterrupts();
 
-      // if (xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY) == pdTRUE)
-      // {
+      if (xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY) == pdTRUE)
+      {
+        noInterrupts();
         // xSemaphoreTake(xSemaphoreENC, (TickType_t)portMAX_DELAY);
         static uint8_t r_enc_last = 0;
 
@@ -153,9 +155,9 @@ void RUN_PIN_ISR_RIGHT(void *pvParameters)
         Serial.print(" RIGHT B: ");
         Serial.println(digitalRead(RIGHT_ENC_PIN_B));
         interrupts();
-        // xSemaphoreGive(xSemaphoreENC);
-        delay(1);
-      // }
+        xSemaphoreGive(xSemaphoreENC);
+        vTaskDelay(ENCDelay);
+      }
     }
   }
 }
