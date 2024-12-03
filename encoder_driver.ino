@@ -94,10 +94,10 @@ void RUN_PIN_ISR_LEFT(void *pvParameters)
   xSemaphoreGive(xSemaphore);
   while (1)
   {
-  xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY);
-  Serial.print("LEFT: ");
-  Serial.println(run_left_ISR);
-  xSemaphoreGive(xSemaphore);
+    // xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY);
+    // Serial.print("LEFT: ");
+    // Serial.println(run_left_ISR);
+    // xSemaphoreGive(xSemaphore);
     if (run_left_ISR)
     {
       run_left_ISR = false;
@@ -110,12 +110,12 @@ void RUN_PIN_ISR_LEFT(void *pvParameters)
         uint8_t current_state = (digitalRead(LEFT_ENC_PIN_A) << 1) | digitalRead(LEFT_ENC_PIN_B);
         enc_last |= current_state;
         left_enc_pos += ENC_STATES[(enc_last & 0x0f)];
-        xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY);
-        Serial.print("LEFT A:  ");
-        Serial.print(digitalRead(LEFT_ENC_PIN_A));
-        Serial.print(" LEFT B:  ");
-        Serial.println(digitalRead(LEFT_ENC_PIN_B));
-        xSemaphoreGive(xSemaphore);
+        // xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY);
+        // Serial.print("LEFT A:  ");
+        // Serial.print(digitalRead(LEFT_ENC_PIN_A));
+        // Serial.print(" LEFT B:  ");
+        // Serial.println(digitalRead(LEFT_ENC_PIN_B));
+        // xSemaphoreGive(xSemaphore);
         interrupts();
         xSemaphoreGive(xSemaphoreENC);
         // delay(1);
@@ -131,10 +131,11 @@ void RUN_PIN_ISR_RIGHT(void *pvParameters)
   Serial.println("started RIGHT ENC TASK");
   xSemaphoreGive(xSemaphore);
   while (1)
-  {  xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY);
-  Serial.print("RIGHT: ");
-  Serial.println(run_right_ISR);
-  xSemaphoreGive(xSemaphore);
+  {
+    //   xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY);
+    // Serial.print("RIGHT: ");
+    // Serial.println(run_right_ISR);
+    // xSemaphoreGive(xSemaphore);
     // xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY);
     // Serial.println("inside RIGHT ENC TASK");
     // xSemaphoreGive(xSemaphore);
@@ -154,13 +155,13 @@ void RUN_PIN_ISR_RIGHT(void *pvParameters)
         right_enc_pos += ENC_STATES[(r_enc_last & 0x0f)];
         run_right_ISR = false;
         // Serial.println("RIGHT RUNNING");
-        xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY);
-        Serial.print("RIGHT A: ");
-        Serial.print(digitalRead(RIGHT_ENC_PIN_A));
-        Serial.print(" RIGHT B: ");
-        Serial.println(digitalRead(RIGHT_ENC_PIN_B));
+        // xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY);
+        // Serial.print("RIGHT A: ");
+        // Serial.print(digitalRead(RIGHT_ENC_PIN_A));
+        // Serial.print(" RIGHT B: ");
+        // Serial.println(digitalRead(RIGHT_ENC_PIN_B));
 
-        xSemaphoreGive(xSemaphore);
+        // xSemaphoreGive(xSemaphore);
         interrupts();
         xSemaphoreGive(xSemaphoreENC);
         vTaskDelay(ENCDelay);
