@@ -88,6 +88,9 @@ void PIN_ISR_RIGHT()
 
 void RUN_PIN_ISR_LEFT(void *pvParameters)
 { (void)pvParameters;
+  xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY);
+  Serial.println("started LEFT ENC TASK");
+  xSemaphoreGive(xSemaphore);
   while (1)
   {
     if (run_left_ISR)
@@ -113,7 +116,9 @@ void RUN_PIN_ISR_LEFT(void *pvParameters)
   }
 }
 void RUN_PIN_ISR_RIGHT(void *pvParameters)
-{ (void)pvParameters;
+{ (void)pvParameters;  xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY);
+  Serial.println("started LEFT ENC TASK");
+  xSemaphoreGive(xSemaphore);
   while (1)
   {
     if (run_right_ISR)
