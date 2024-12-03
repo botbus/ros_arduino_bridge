@@ -107,10 +107,10 @@ void setup()
   vTaskCoreAffinitySet(imuTask, 1 << 0); // Core 1
 
   leftENCTask = xTaskCreateStatic(RUN_PIN_ISR_LEFT, "leftENC", STACK_SIZE, NULL, configMAX_PRIORITIES - 1, xStack_leftENC, &xTaskBuffer_leftENC);
-  vTaskCoreAffinitySet(leftENCTask, 1 << 1); // Core 0
+  vTaskCoreAffinitySet(leftENCTask, 1 << 0); // Core 0
 
   rightENCTask = xTaskCreateStatic(RUN_PIN_ISR_RIGHT, "rightENC", STACK_SIZE, NULL, configMAX_PRIORITIES - 1, xStack_rightENC, &xTaskBuffer_rightENC);
-  vTaskCoreAffinitySet(rightENCTask, 1 << 1); // Core 0
+  vTaskCoreAffinitySet(rightENCTask, 1 << 0); // Core 0
 }
 
 // void setup1() {
@@ -158,9 +158,9 @@ void motor_driver(void *pvParameters)
     {  
       // if (run_right_ISR)
           // Serial.println("Active");
-          Serial.print(run_right_ISR);
-          Serial.print("     ");
-          Serial.println(run_left_ISR);
+          // Serial.print(run_right_ISR);
+          // Serial.print("     ");
+          // Serial.println(run_left_ISR);
       while (Serial.available() > 0)
       {
         // Read the next character
