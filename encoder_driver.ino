@@ -31,7 +31,7 @@
 volatile long left_enc_pos = 0L;
 volatile long right_enc_pos = 0L;
 static const int ENC_STATES[] = {0, 1, -1, 0, -1, 0, 0, 1, 1, 0, 0, -1, 0, -1, 1, 0}; // encoder lookup table
-const TickType_t ENCDelay = 1000 / portTICK_PERIOD_MS;
+const TickType_t ENCDelay = 3 / portTICK_PERIOD_MS;
 // /* Interrupt routine for LEFT encoder, taking care of actual counting */
 // ISR(PCINT2_vect)
 // {
