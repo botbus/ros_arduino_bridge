@@ -62,7 +62,7 @@ unsigned long nextPID = PID_INTERVAL;
   NOTE:  This is the number of words the stack will hold, not the number of
   bytes.  For example, if each stack item is 32-bits, and this is set to 100,
   then 400 bytes (100 * 32-bits) will be allocated. */
-#define STACK_SIZE 200
+#define STACK_SIZE 512
 
 /* Structure that will hold the TCB of the task being created. */
 StaticTask_t xTaskBuffer_imu;
@@ -100,11 +100,11 @@ void setup()
   xSemaphore = xSemaphoreCreateMutexStatic(&xMutexBuffer);
   xSemaphoreENC = xSemaphoreCreateMutexStatic(&xMutexBufferENC);
 
-  motorTask = xTaskCreateStatic(motor_driver, "motor_driver", STACK_SIZE, NULL, configMAX_PRIORITIES - 2, xStack_motor, &xTaskBuffer_motor);
-  vTaskCoreAffinitySet(motorTask, 1 << 1); // Core 0
+  motorTask = xTaskCreateStatic(motor_driver, "motor_driver", STACK_SIZE, NULL, configMAX_PRIORITIES - 1, xStack_motor, &xTaskBuffer_motor);
+  vTaskCoreAffinitySet(motorTask, 1 << 0); // Core 0
 
-  imuTask = xTaskCreateStatic(imu_driver, "imu_driver", STACK_SIZE, NULL, configMAX_PRIORITIES - 2, xStack_imu, &xTaskBuffer_imu);
-  vTaskCoreAffinitySet(imuTask, 1 << 1); // Core 1
+  imuTask = xTaskCreateStatic(imu_driver, "imu_driver", STACK_SIZE, NULL, configMAX_PRIORITIES - 1, xStack_imu, &xTaskBuffer_imu);
+  vTaskCoreAffinitySet(imuTask, 1 << 0); // Core 1
 
   leftENCTask = xTaskCreateStatic(RUN_PIN_ISR_LEFT, "leftENC", STACK_SIZE, NULL, configMAX_PRIORITIES - 1, xStack_leftENC, &xTaskBuffer_leftENC);
   vTaskCoreAffinitySet(leftENCTask, 1 << 0); // Core 0
