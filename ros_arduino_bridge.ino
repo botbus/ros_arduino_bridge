@@ -58,9 +58,6 @@
 #include "include/encoder_driver.h"
 unsigned long nextPID = PID_INTERVAL;
 
-
-
-
 /* Dimensions of the buffer that the task being created will use as its stack.
   NOTE:  This is the number of words the stack will hold, not the number of
   bytes.  For example, if each stack item is 32-bits, and this is set to 100,
@@ -90,7 +87,8 @@ StaticSemaphore_t xMutexBufferENC;
 TaskHandle_t motorTask, imuTask, leftENCTask, rightENCTask;
 
 /* Setup function--runs once at startup. */
-void setup() {
+void setup()
+{
   Serial.begin(BAUDRATE);
   while (!Serial)
     ;
@@ -100,22 +98,20 @@ void setup() {
   initMotorPins();
   // xSemaphore = xSemaphoreCreateMutexStatic(&xMutexVuffer);
   xSemaphore = xSemaphoreCreateMutexStatic(&xMutexBuffer);
-    xSemaphoreENC = xSemaphoreCreateMutexStatic(&xMutexBufferENC);
+  xSemaphoreENC = xSemaphoreCreateMutexStatic(&xMutexBufferENC);
 
   motorTask = xTaskCreateStatic(motor_driver, "motor_driver", STACK_SIZE, NULL, configMAX_PRIORITIES - 2, xStack_motor, &xTaskBuffer_motor);
-  vTaskCoreAffinitySet(motorTask, 1 << 0);  // Core 0
+  vTaskCoreAffinitySet(motorTask, 1 << 0); // Core 0
 
   imuTask = xTaskCreateStatic(imu_driver, "imu_driver", STACK_SIZE, NULL, configMAX_PRIORITIES - 2, xStack_imu, &xTaskBuffer_imu);
-  vTaskCoreAffinitySet(imuTask, 1 << 0);  // Core 1
+  vTaskCoreAffinitySet(imuTask, 1 << 0); // Core 1
 
-    leftENCTask = xTaskCreateStatic(RUN_PIN_ISR_LEFT, "leftENC", STACK_SIZE, NULL, configMAX_PRIORITIES - 1, xStack_leftENC, &xTaskBuffer_leftENC);
-  vTaskCoreAffinitySet(leftENCTask, 1 << 0);  // Core 0
+  leftENCTask = xTaskCreateStatic(RUN_PIN_ISR_LEFT, "leftENC", STACK_SIZE, NULL, configMAX_PRIORITIES - 1, xStack_leftENC, &xTaskBuffer_leftENC);
+  vTaskCoreAffinitySet(leftENCTask, 1 << 1); // Core 0
 
-    rightENCTask = xTaskCreateStatic(RUN_PIN_ISR_RIGHT, "rightENC", STACK_SIZE, NULL, configMAX_PRIORITIES - 1, xStack_rightENC, &xTaskBuffer_rightENC);
-  vTaskCoreAffinitySet(rightENCTask, 1 << 0);  // Core 0
+  rightENCTask = xTaskCreateStatic(RUN_PIN_ISR_RIGHT, "rightENC", STACK_SIZE, NULL, configMAX_PRIORITIES - 1, xStack_rightENC, &xTaskBuffer_rightENC);
+  vTaskCoreAffinitySet(rightENCTask, 1 << 1); // Core 0
 }
-
-
 
 // void setup1() {
 //   while (!Serial)
@@ -123,7 +119,8 @@ void setup() {
 
 // }
 
-void imu_driver(void *pvParameters) {
+void imu_driver(void *pvParameters)
+{
   (void)pvParameters;
   xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY);
   Serial.println("started imu driver task");
@@ -131,15 +128,16 @@ void imu_driver(void *pvParameters) {
   const TickType_t xDelay = 3 / portTICK_PERIOD_MS;
   delay(100);
   while (1)
-  {//Serial.println("reading imu");
-  //  readIMU(xDelay);
-  
+  { // Serial.println("reading imu");
+    //  readIMU(xDelay);
   }
 }
-void loop() {
+void loop()
+{
   // Serial.println("asd");
 }
-void motor_driver(void *pvParameters) {
+void motor_driver(void *pvParameters)
+{
   (void)pvParameters;
   xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY);
   Serial.println("started motor driver task");
@@ -148,20 +146,25 @@ void motor_driver(void *pvParameters) {
   initMotorController();
   resetPID();
   delay(100);
-  while (1) {
+  while (1)
+  {
     // if (run_right_ISR)
     //   RUN_PIN_ISR_RIGHT();
     // if (run_left_ISR)
     //  RUN_PIN_ISR_LEFT();
 
-//Serial.println("Reading motor driver");
-    if (xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY) == pdTRUE) {
-      while (Serial.available() > 0) {
+    // Serial.println("Reading motor driver");
+    if (xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY) == pdTRUE)
+    {  if (run_right_ISR)
+          Serial.println("ACtive");
+      while (Serial.available() > 0)
+      {
         // Read the next character
         chr = Serial.read();
-
+      
         // Terminate a command with a CR
-        if (chr == 13) {
+        if (chr == 13)
+        {
           if (arg == 1)
             argv1[indx] = '\0';
           else if (arg == 2)
@@ -170,40 +173,49 @@ void motor_driver(void *pvParameters) {
           resetCommand();
         }
         // Use spaces to delimit parts of the command
-        else if (chr == ' ') {
+        else if (chr == ' ')
+        {
           // Step through the arguments
           if (arg == 0)
             arg = 1;
-          else if (arg == 1) {
+          else if (arg == 1)
+          {
             argv1[indx] = '\0';
             arg = 2;
             indx = 0;
           }
           continue;
-        } else {
-          if (arg == 0) {
+        }
+        else
+        {
+          if (arg == 0)
+          {
             // The first arg is the single-letter command
             cmd = chr;
-          } else if (arg == 1) {
+          }
+          else if (arg == 1)
+          {
             // Subsequent arguments can be more than one character
             argv1[indx] = chr;
             indx++;
-          } else if (arg == 2) {
+          }
+          else if (arg == 2)
+          {
             argv2[indx] = chr;
             indx++;
           }
         }
       }
 
-
-      if (millis() > nextPID) {
+      if (millis() > nextPID)
+      {
         updatePID();
         nextPID += PID_INTERVAL;
       }
-//      if ((millis() - lastMotorCommand) > AUTO_STOP_INTERVAL) {
-  //      setMotorSpeeds(0, 0);
-     //   moving = 0;
-   //   }
+      //      if ((millis() - lastMotorCommand) > AUTO_STOP_INTERVAL) {
+      //      setMotorSpeeds(0, 0);
+      //   moving = 0;
+      //   }
 
       xSemaphoreGive(xSemaphore);
       vTaskDelay(yDelay);
