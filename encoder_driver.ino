@@ -119,8 +119,8 @@ void RUN_PIN_ISR_LEFT(void *pvParameters)
         interrupts();
         xSemaphoreGive(xSemaphoreENC);
         // delay(1);
-        vTaskDelay(ENCDelay);
-      }
+        
+      }        vTaskDelay(ENCDelay);
     }
   }
 }
@@ -164,8 +164,8 @@ void RUN_PIN_ISR_RIGHT(void *pvParameters)
         // xSemaphoreGive(xSemaphore);
         interrupts();
         xSemaphoreGive(xSemaphoreENC);
-        vTaskDelay(ENCDelay);
-      }
+        
+      }vTaskDelay(ENCDelay);
     }
   }
 }
