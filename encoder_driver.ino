@@ -30,7 +30,7 @@
 // #elif defined(ARDUINO_ENC_COUNTER)
 volatile long left_enc_pos = 0L;
 volatile long right_enc_pos = 0L;
-static const int ENC_STATES[] = { 0, 1, -1, 0, -1, 0, 0, 1, 1, 0, 0, -1, 0, -1, 1, 0 };  // encoder lookup table
+static const int ENC_STATES[] = {0, 1, -1, 0, -1, 0, 0, 1, 1, 0, 0, -1, 0, -1, 1, 0}; // encoder lookup table
 
 // /* Interrupt routine for LEFT encoder, taking care of actual counting */
 // ISR(PCINT2_vect)
@@ -56,16 +56,17 @@ static const int ENC_STATES[] = { 0, 1, -1, 0, -1, 0, 0, 1, 1, 0, 0, -1, 0, -1, 
 #include "include/commands.h"
 #include "include/diff_controller.h"
 #include "include/encoder_driver.h"
-bool run_left_ISR{ false };
-bool run_right_ISR{ false };
+bool run_left_ISR{false};
+bool run_right_ISR{false};
 
-const int LEFT_ENC_PIN_A{ 4 };  // pin 2
-const int LEFT_ENC_PIN_B{ 5};  // pin 3
+const int LEFT_ENC_PIN_A{4}; // pin 2
+const int LEFT_ENC_PIN_B{5}; // pin 3
 
 // below can be changed, but should be PORTC pins
-const int RIGHT_ENC_PIN_A{ 3 };  // pin A4
-const int RIGHT_ENC_PIN_B{ 2 };  // pin A5
-void initMotorPins() {
+const int RIGHT_ENC_PIN_A{3}; // pin A4
+const int RIGHT_ENC_PIN_B{2}; // pin A5
+void initMotorPins()
+{
   pinMode(LEFT_ENC_PIN_A, INPUT_PULLUP);
   pinMode(RIGHT_ENC_PIN_A, INPUT_PULLUP);
   pinMode(LEFT_ENC_PIN_B, INPUT_PULLUP);
@@ -76,15 +77,18 @@ void initMotorPins() {
   attachInterrupt(digitalPinToInterrupt(LEFT_ENC_PIN_B), PIN_ISR_LEFT, CHANGE);
   attachInterrupt(digitalPinToInterrupt(RIGHT_ENC_PIN_B), PIN_ISR_RIGHT, CHANGE);
 }
-void PIN_ISR_LEFT() {
+void PIN_ISR_LEFT()
+{
   run_left_ISR = true;
 }
-void PIN_ISR_RIGHT() {
+void PIN_ISR_RIGHT()
+{
   run_right_ISR = true;
 }
 
-void RUN_PIN_ISR_LEFT() {
-noInterrupts();  // Disable interrupts
+void RUN_PIN_ISR_LEFT()
+{
+  noInterrupts(); // Disable interrupts
   static uint8_t enc_last = 0;
 
   enc_last <<= 2;
@@ -93,25 +97,35 @@ noInterrupts();  // Disable interrupts
   enc_last |= current_state;
   left_enc_pos += ENC_STATES[(enc_last & 0x0f)];
   run_left_ISR = false;
-//   Serial.println("LEFT  RUNNING");
-interrupts(); 
+  Serial.print("LEFT A: ");
+  Serial.print(digitalRead(LEFT_ENC_PIN_A));
+  Serial.print("LEFT B: ");
+  Serial.println(digitalRead(LEFT_ENC_PIN_B));
+
+  interrupts();
 }
-void RUN_PIN_ISR_RIGHT() {
-noInterrupts();
+void RUN_PIN_ISR_RIGHT()
+{
+  noInterrupts();
   static uint8_t r_enc_last = 0;
 
   r_enc_last <<= 2;
 
   uint8_t current_state = (digitalRead(RIGHT_ENC_PIN_A) << 1) | digitalRead(RIGHT_ENC_PIN_B);
- r_enc_last |= current_state;
+  r_enc_last |= current_state;
   right_enc_pos += ENC_STATES[(r_enc_last & 0x0f)];
   run_right_ISR = false;
   // Serial.println("RIGHT RUNNING");
-interrupts();
+   Serial.print("RIGT A: ");
+  Serial.print(digitalRead(RIGHT_ENC_PIN_A));
+  Serial.print("RIGT B: ");
+  Serial.println(digitalRead(RIGHT_ENC_PIN_B));
+  interrupts();
 }
 
 /* Wrap the encoder reading function */
-long readEncoder(int i) {
+long readEncoder(int i)
+{
   if (i == LEFT)
     return left_enc_pos;
   else
@@ -119,11 +133,15 @@ long readEncoder(int i) {
 }
 
 /* Wrap the encoder reset function */
-void resetEncoder(int i) {
-  if (i == LEFT) {
+void resetEncoder(int i)
+{
+  if (i == LEFT)
+  {
     left_enc_pos = 0L;
     return;
-  } else {
+  }
+  else
+  {
     right_enc_pos = 0L;
     return;
   }
@@ -133,7 +151,8 @@ void resetEncoder(int i) {
 // #endif
 
 /* Wrap the encoder reset function */
-void resetEncoders() {
+void resetEncoders()
+{
   resetEncoder(LEFT);
   resetEncoder(RIGHT);
 }
