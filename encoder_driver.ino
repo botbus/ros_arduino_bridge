@@ -56,6 +56,19 @@ const TickType_t ENCDelay = 3 / portTICK_PERIOD_MS;
 #include "include/commands.h"
 #include "include/diff_controller.h"
 #include "include/encoder_driver.h"
+
+#include "hardware/gpio.h"
+
+uint8_t read_gpio_low_level(uint pin) {
+    // Make sure the GPIO is set as an input
+    gpio_set_dir(pin, false);
+
+    // Read the GPIO state from the GPIO_IN register
+    uint32_t gpio_states = sio_hw->gpio_in;
+
+    // Extract the specific pin's state
+    return (gpio_states >> pin) & 1;
+}
 bool run_left_ISR{false};
 bool run_right_ISR{false};
 
@@ -107,8 +120,8 @@ void RUN_PIN_ISR_LEFT(void *pvParameters)
         // xSemaphoreTake(xSemaphoreENC, (TickType_t)portMAX_DELAY);
         static uint8_t enc_last = 0;
         enc_last <<= 2;
-        uint8_t current_state = (digitalRead(LEFT_ENC_PIN_A) << 1) | digitalRead(LEFT_ENC_PIN_B);
-        enc_last |= current_state;
+    
+        enc_last |= (digitalRead(LEFT_ENC_PIN_A) << 1) | digitalRead(LEFT_ENC_PIN_B); 
         left_enc_pos += ENC_STATES[(enc_last & 0x0f)];
         // xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY);
         // Serial.print("LEFT A:  ");
