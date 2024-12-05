@@ -9,7 +9,7 @@ static const int ENC_STATES[4][4] = {{0, -1, 1, 2},
                                      {-1, 2, 0, 1},
                                      {2, 1, -1, 0}};
 
-const TickType_t ENCDelay = 1 / portTICK_PERIOD_MS;
+const TickType_t ENCDelay = 2 / portTICK_PERIOD_MS;
 
 bool run_left_ISR{false};
 bool run_right_ISR{false};
