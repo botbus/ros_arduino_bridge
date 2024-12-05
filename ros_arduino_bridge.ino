@@ -45,9 +45,11 @@
  *  POSSIBILITY OF SUCH DAMAGE.
  *********************************************************************/
 #include <FreeRTOS.h>
+// #include <RP2040_FreeRTOS.h>
 #include <task.h>
 #include <semphr.h>
 #include "pico/stdlib.h"
+#include "hardware/gpio.h"
 // #include "commands.h"
 #include "include/imu_handler.h"
 #include "include/setup_definitions.h"

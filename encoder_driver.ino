@@ -52,7 +52,7 @@ const TickType_t ENCDelay = 3 / portTICK_PERIOD_MS;
 
 //   right_enc_pos += ENC_STATES[(enc_last & 0x0f)];
 // }
-#include "Arduino.h"
+
 #include "include/commands.h"
 #include "include/diff_controller.h"
 #include "include/encoder_driver.h"
@@ -73,13 +73,19 @@ void initMotorPins()
   pinMode(RIGHT_ENC_PIN_B, INPUT_PULLUP);
 
   attachInterrupt(digitalPinToInterrupt(LEFT_ENC_PIN_A), PIN_ISR_LEFT, CHANGE);
-  attachInterrupt(digitalPinToInterrupt(RIGHT_ENC_PIN_A), PIN_ISR_RIGHT, CHANGE);
+  // attachInterrupt(digitalPinToInterrupt(RIGHT_ENC_PIN_A), PIN_ISR_RIGHT, CHANGE);
   attachInterrupt(digitalPinToInterrupt(LEFT_ENC_PIN_B), PIN_ISR_LEFT, CHANGE);
-  attachInterrupt(digitalPinToInterrupt(RIGHT_ENC_PIN_B), PIN_ISR_RIGHT, CHANGE);
+  // attachInterrupt(digitalPinToInterrupt(RIGHT_ENC_PIN_B), PIN_ISR_RIGHT, CHANGE);
 }
 void PIN_ISR_LEFT()
 {
-  run_left_ISR = true;
+  // run_left_ISR = true;
+
+  long gpio_states = sio_hw->gpio_in;
+  static uint8_t enc_last = 0;
+  enc_last <<= 2;
+  enc_last |= ((gpio_states >> LEFT_ENC_PIN_A) << 1) | (gpio_states >> LEFT_ENC_PIN_B);
+  left_enc_pos += ENC_STATES[(enc_last & 0x0f)];
 }
 void PIN_ISR_RIGHT()
 {
