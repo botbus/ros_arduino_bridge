@@ -103,12 +103,14 @@ void RUN_PIN_ISR_RIGHT(void *pvParameters)
 void right_ENC()
 {
   // static int prevVal = (digitalRead(RIGHT_ENC_PIN_A) << 1) | digitalRead(RIGHT_ENC_PIN_B);
-  static int val = 0;
-  val =  (digitalRead(RIGHT_ENC_PIN_A) << 1) | digitalRead(RIGHT_ENC_PIN_B);
-  val <<=2;
-  Serial.print(val);
+  static int prevVal = digitalRead(RIGHT_ENC_PIN_A) << 1) | digitalRead(RIGHT_ENC_PIN_B);;
+  int val =  (digitalRead(RIGHT_ENC_PIN_A) << 1) | digitalRead(RIGHT_ENC_PIN_B);
+  
+  Serial.print(prevVal);
   Serial.print("   :   ");
-  Serial.println(ENC_STATES[(val & 0x0F)]);
+  Serial.print(val);
+  Serial.print("   :   ")
+  Serial.println(ENC_STATES[prevVal][val]);
 
 }
 long readEncoder(int i)
