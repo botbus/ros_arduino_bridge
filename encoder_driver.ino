@@ -30,7 +30,11 @@
 // #elif defined(ARDUINO_ENC_COUNTER)
 volatile long left_enc_pos = 0L;
 volatile long right_enc_pos = 0L;
-static const int ENC_STATES[] = {0, 1, -1, 0, -1, 0, 0, 1, 1, 0, 0, -1, 0, -1, 1, 0}; // encoder lookup table
+static const int ENC_STATES[] = {
+    0, -1, 1, 0,
+    1, 0, 0, -1,
+    -1, 0, 0, 1,
+    0, 1, -1, 0}; // encoder lookup table
 const TickType_t ENCDelay = 3 / portTICK_PERIOD_MS;
 // /* Interrupt routine for LEFT encoder, taking care of actual counting */
 // ISR(PCINT2_vect)
@@ -73,9 +77,9 @@ void initMotorPins()
   pinMode(RIGHT_ENC_PIN_B, INPUT_PULLUP);
 
   attachInterrupt(digitalPinToInterrupt(LEFT_ENC_PIN_A), PIN_ISR_LEFT, CHANGE);
-  // attachInterrupt(digitalPinToInterrupt(RIGHT_ENC_PIN_A), PIN_ISR_RIGHT, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(RIGHT_ENC_PIN_A), PIN_ISR_RIGHT, CHANGE);
   attachInterrupt(digitalPinToInterrupt(LEFT_ENC_PIN_B), PIN_ISR_LEFT, CHANGE);
-  // attachInterrupt(digitalPinToInterrupt(RIGHT_ENC_PIN_B), PIN_ISR_RIGHT, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(RIGHT_ENC_PIN_B), PIN_ISR_RIGHT, CHANGE);
 }
 void PIN_ISR_LEFT()
 {
@@ -90,7 +94,7 @@ void PIN_ISR_LEFT()
 void PIN_ISR_RIGHT()
 {
   // run_right_ISR = true;
-    long gpio_states = sio_hw->gpio_in;
+  long gpio_states = sio_hw->gpio_in;
   static uint8_t enc_last = 0;
   enc_last <<= 2;
   enc_last |= ((gpio_states >> RIGHT_ENC_PIN_A) << 1) | (gpio_states >> RIGHT_ENC_PIN_B);
