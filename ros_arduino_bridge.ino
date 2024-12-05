@@ -163,6 +163,7 @@ void motor_driver(void *pvParameters)
       // Serial.print(run_right_ISR);
       // Serial.print("     ");
       // Serial.println(run_left_ISR);
+      right_ENC();
       while (Serial.available() > 0)
       {
         // Read the next character

@@ -5,10 +5,10 @@
 volatile long left_enc_pos = 0L;
 volatile long right_enc_pos = 0L;
 static const int ENC_STATES[] = {
-    0, -1, 1, 0,
-    1, 0, 0, -1,
-    -1, 0, 0, 1,
-    0, 1, -1, 0};
+    0, -1, 1, 2,
+    1, 0, 2, -1,
+    -1, 2, 0, 1,
+    2, 1, -1, 0};
 
 const TickType_t ENCDelay = 1 / portTICK_PERIOD_MS;
 
@@ -60,7 +60,7 @@ void RUN_PIN_ISR_LEFT(void *pvParameters)
         long gpio_states = sio_hw->gpio_in;
         static uint8_t enc_last = 0;
         enc_last <<= 2;
-        enc_last |= ((gpio_states >> LEFT_ENC_PIN_B) << 1) | (gpio_states >> LEFT_ENC_PIN_A);
+        enc_last |= ((gpio_states >> LEFT_ENC_PIN_A << 1) | (gpio_states >> LEFT_ENC_PIN_B));
         left_enc_pos += ENC_STATES[(enc_last & 0x0f)];
 
         interrupts();
@@ -99,6 +99,16 @@ void RUN_PIN_ISR_RIGHT(void *pvParameters)
   }
 }
 
+
+void right_ENC()
+{
+  // static int prevVal = (digitalRead(RIGHT_ENC_PIN_A) << 1) | digitalRead(RIGHT_ENC_PIN_B);
+  static int val = 0;
+  val =  (digitalRead(RIGHT_ENC_PIN_A) << 1) | digitalRead(RIGHT_ENC_PIN_B);
+  val <<=2;
+  Serial.println(ENC_STATES[(val & 0x0F)]);
+
+}
 long readEncoder(int i)
 {
   if (i == LEFT)
