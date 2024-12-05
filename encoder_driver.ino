@@ -10,7 +10,7 @@ static const int ENC_STATES[] = {
     -1, 0, 0, 1,
     0, 1, -1, 0};
 
-const TickType_t ENCDelay = 3 / portTICK_PERIOD_MS;
+const TickType_t ENCDelay = 1 / portTICK_PERIOD_MS;
 
 bool run_left_ISR{false};
 bool run_right_ISR{false};
@@ -68,7 +68,7 @@ void RUN_PIN_ISR_LEFT(void *pvParameters)
       
       }
     }
-    // vTaskDelay(ENCDelay);
+    vTaskDelay(ENCDelay);
   }
 }
 void RUN_PIN_ISR_RIGHT(void *pvParameters)
@@ -95,7 +95,7 @@ void RUN_PIN_ISR_RIGHT(void *pvParameters)
         xSemaphoreGive(xSemaphoreENC);
       }
     }
-    // vTaskDelay(ENCDelay);
+    vTaskDelay(ENCDelay);
   }
 }
 
