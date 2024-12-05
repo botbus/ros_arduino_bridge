@@ -89,7 +89,12 @@ void PIN_ISR_LEFT()
 }
 void PIN_ISR_RIGHT()
 {
-  run_right_ISR = true;
+  // run_right_ISR = true;
+    long gpio_states = sio_hw->gpio_in;
+  static uint8_t enc_last = 0;
+  enc_last <<= 2;
+  enc_last |= ((gpio_states >> RIGHT_ENC_PIN_A) << 1) | (gpio_states >> RIGHT_ENC_PIN_B);
+  right_enc_pos += ENC_STATES[(enc_last & 0x0f)];
 }
 
 void RUN_PIN_ISR_LEFT(void *pvParameters)
