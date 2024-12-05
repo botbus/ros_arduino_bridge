@@ -166,13 +166,13 @@ void left_ENC(void *pvParameters)
   while (1)
   {
 
-    xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY);
-    Serial.println("LEFT ENC TASK");
-    xSemaphoreGive(xSemaphore);
+    // xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY);
+    // Serial.println("LEFT ENC TASK");
+    // xSemaphoreGive(xSemaphore);
     // static int prevVal = (digitalRead(RIGHT_ENC_PIN_A) << 1) | digitalRead(RIGHT_ENC_PIN_B);
     static int newVal{0};
     int valA = digitalRead(LEFT_ENC_PIN_A);
-    int valB = digitalRead(LEFT_ENC_PIN_A);
+    int valB = digitalRead(LEFT_ENC_PIN_B);
     static int prevVal = (valA << 1) + valB;
     newVal = (valA << 1) + valB;
     int info = ENC_STATES[prevVal][newVal];
