@@ -126,10 +126,7 @@ void right_ENC(void *pvParameters)
     {
       counterClockState_right |= (1 << newVal_right);
     }
-    else if (info_right == 2)
-    {
-      // Serial.println("skipped a value");
-    }
+ 
 
     if (prevVal_right != newVal_right && newVal_right == 3)
     {
@@ -139,17 +136,17 @@ void right_ENC(void *pvParameters)
       // make sure it's gone through at least 3 of those (and assume if one is missing it's because I didn't read fast enough)
       if (clockState_right == 0b1011 || clockState_right == 0b1101 || clockState_right == 0b1110 || clockState_right == 0b1111)
       {
+        right_enc_pos++;
         xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY);
         Serial.println("RIGHT ++");
         xSemaphoreGive(xSemaphore);
-        right_enc_pos++;
       }
       if (counterClockState_right == 0b1011 || counterClockState_right == 0b1101 || counterClockState_right == 0b1110 || counterClockState_right == 0b1111)
       {
+        right_enc_pos--;
         xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY);
         Serial.println("RIGHT --");
         xSemaphoreGive(xSemaphore);
-        right_enc_pos--;
       }
 
       clockState_right = 0;
@@ -168,6 +165,10 @@ void left_ENC(void *pvParameters)
   xSemaphoreGive(xSemaphore);
   while (1)
   {
+
+    xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY);
+    Serial.println("LEFT ENC TASK");
+    xSemaphoreGive(xSemaphore);
     // static int prevVal = (digitalRead(RIGHT_ENC_PIN_A) << 1) | digitalRead(RIGHT_ENC_PIN_B);
     static int newVal{0};
     int valA = digitalRead(LEFT_ENC_PIN_A);
@@ -199,17 +200,17 @@ void left_ENC(void *pvParameters)
       // make sure it's gone through at least 3 of those (and assume if one is missing it's because I didn't read fast enough)
       if (clockState == 0b1011 || clockState == 0b1101 || clockState == 0b1110 || clockState == 0b1111)
       {
+        left_enc_pos++;
         xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY);
         Serial.println("LEFT ++");
         xSemaphoreGive(xSemaphore);
-        left_enc_pos++;
       }
       if (counterClockState == 0b1011 || counterClockState == 0b1101 || counterClockState == 0b1110 || counterClockState == 0b1111)
       {
+        left_enc_pos--;
         xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY);
         Serial.println("LEFT --");
         xSemaphoreGive(xSemaphore);
-        left_enc_pos--;
       }
 
       clockState = 0;
