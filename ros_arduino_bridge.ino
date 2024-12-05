@@ -102,17 +102,17 @@ void setup()
   xSemaphore = xSemaphoreCreateMutexStatic(&xMutexBuffer);
   xSemaphoreENC = xSemaphoreCreateMutexStatic(&xMutexBufferENC);
 
-  motorTask = xTaskCreateStatic(motor_driver, "motor_driver", STACK_SIZE, NULL, configMAX_PRIORITIES - 1, xStack_motor, &xTaskBuffer_motor);
-  vTaskCoreAffinitySet(motorTask, 1 << 0); // Core 0
+  // motorTask = xTaskCreateStatic(motor_driver, "motor_driver", STACK_SIZE, NULL, configMAX_PRIORITIES - 1, xStack_motor, &xTaskBuffer_motor);
+  // vTaskCoreAffinitySet(motorTask, 1 << 0); // Core 0
 
-  imuTask = xTaskCreateStatic(imu_driver, "imu_driver", STACK_SIZE, NULL, configMAX_PRIORITIES - 2, xStack_imu, &xTaskBuffer_imu);
-  vTaskCoreAffinitySet(imuTask, 1 << 0); // Core 1
+  // imuTask = xTaskCreateStatic(imu_driver, "imu_driver", STACK_SIZE, NULL, configMAX_PRIORITIES - 2, xStack_imu, &xTaskBuffer_imu);
+  // vTaskCoreAffinitySet(imuTask, 1 << 0); // Core 1
 
   // leftENCTask = xTaskCreateStatic(RUN_PIN_ISR_LEFT, "leftENC", STACK_SIZE, NULL, configMAX_PRIORITIES - 3, xStack_leftENC, &xTaskBuffer_leftENC);
   // vTaskCoreAffinitySet(leftENCTask, 1 << 1); // Core 0
 
-  // rightENCTask = xTaskCreateStatic(RUN_PIN_ISR_RIGHT, "rightENC", STACK_SIZE, NULL, configMAX_PRIORITIES - 3, xStack_rightENC, &xTaskBuffer_rightENC);
-  // vTaskCoreAffinitySet(rightENCTask, 1 << 1); // Core 0
+  rightENCTask = xTaskCreateStatic(right_ENC, "rightENC", STACK_SIZE, NULL, configMAX_PRIORITIES - 3, xStack_rightENC, &xTaskBuffer_rightENC);
+  vTaskCoreAffinitySet(rightENCTask, 1 << 1); // Core 0
 }
 
 // void setup1() {
@@ -163,7 +163,7 @@ void motor_driver(void *pvParameters)
       // Serial.print(run_right_ISR);
       // Serial.print("     ");
       // Serial.println(run_left_ISR);
-      right_ENC();
+      
       while (Serial.available() > 0)
       {
         // Read the next character

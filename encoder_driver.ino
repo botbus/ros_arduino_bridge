@@ -97,49 +97,57 @@ void RUN_PIN_ISR_RIGHT(void *pvParameters)
   }
 }
 
-void right_ENC()
+void right_ENC(void *pvParameters)
 {
-  // static int prevVal = (digitalRead(RIGHT_ENC_PIN_A) << 1) | digitalRead(RIGHT_ENC_PIN_B);
-static int newVal{0};
-  int valA = digitalRead(RIGHT_ENC_PIN_A);
-  int valB = digitalRead(RIGHT_ENC_PIN_B);
-  static int prevVal = (valA << 1) + valB;
-  newVal = (valA << 1) + valB;
-  int info = ENC_STATES[prevVal][newVal];
-  static unsigned int clockState = 0;
-  static unsigned int counterClockState = 0;
+  (void)pvParameters;
+  xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY);
+  Serial.println("started RIGHT ENC TASK");
+  xSemaphoreGive(xSemaphore);
+  while (1)
+  {
+    // static int prevVal = (digitalRead(RIGHT_ENC_PIN_A) << 1) | digitalRead(RIGHT_ENC_PIN_B);
+    static int newVal{0};
+    int valA = digitalRead(RIGHT_ENC_PIN_A);
+    int valB = digitalRead(RIGHT_ENC_PIN_B);
+    static int prevVal = (valA << 1) + valB;
+    newVal = (valA << 1) + valB;
+    int info = ENC_STATES[prevVal][newVal];
+    static unsigned int clockState = 0;
+    static unsigned int counterClockState = 0;
 
-  if (info == 1)
-  {
-    clockState |= (1 << newVal); // set the bit to 1
-  }
-  else if (info == -1)
-  {
-    counterClockState |= (1 << newVal);
-  }
-  else if (info == 2)
-  {
-    Serial.println("skipped a value");
-  }
-
-  if (prevVal != newVal && newVal == 3)
-  {
-    // changed to the non moving state, lets figure out what direction we went!
-
-    // for each clockwise and counterclockwise, the encoder state goes through 4 distinct states
-    // make sure it's gone through at least 3 of those (and assume if one is missing it's because I didn't read fast enough)
-    if (clockState == 0b1011 || clockState == 0b1101 || clockState == 0b1110 || clockState == 0b1111)
+    if (info == 1)
     {
-      Serial.println("Result was clockwise");
+      clockState |= (1 << newVal); // set the bit to 1
     }
-    if (counterClockState == 0b1011 || counterClockState == 0b1101 || counterClockState == 0b1110 || counterClockState == 0b1111)
+    else if (info == -1)
     {
-      Serial.println("Result was COUNTER clockwise");
+      counterClockState |= (1 << newVal);
+    }
+    else if (info == 2)
+    {
+      Serial.println("skipped a value");
     }
 
-    clockState = 0;
-    counterClockState = 0;
-  } prevVal = newVal;
+    if (prevVal != newVal && newVal == 3)
+    {
+      // changed to the non moving state, lets figure out what direction we went!
+
+      // for each clockwise and counterclockwise, the encoder state goes through 4 distinct states
+      // make sure it's gone through at least 3 of those (and assume if one is missing it's because I didn't read fast enough)
+      if (clockState == 0b1011 || clockState == 0b1101 || clockState == 0b1110 || clockState == 0b1111)
+      {
+        Serial.println("Result was clockwise");
+      }
+      if (counterClockState == 0b1011 || counterClockState == 0b1101 || counterClockState == 0b1110 || counterClockState == 0b1111)
+      {
+        Serial.println("Result was COUNTER clockwise");
+      }
+
+      clockState = 0;
+      counterClockState = 0;
+    }
+    prevVal = newVal;
+  }
 }
 long readEncoder(int i)
 {
