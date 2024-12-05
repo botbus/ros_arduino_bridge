@@ -106,6 +106,8 @@ void right_ENC()
   static int val = 0;
   val =  (digitalRead(RIGHT_ENC_PIN_A) << 1) | digitalRead(RIGHT_ENC_PIN_B);
   val <<=2;
+  Serial.print(val);
+  Serial.print("   :   ");
   Serial.println(ENC_STATES[(val & 0x0F)]);
 
 }
