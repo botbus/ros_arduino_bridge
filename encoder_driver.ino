@@ -137,16 +137,16 @@ void right_ENC(void *pvParameters)
       if (clockState_right == 0b1011 || clockState_right == 0b1101 || clockState_right == 0b1110 || clockState_right == 0b1111)
       {
         right_enc_pos++;
-        xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY);
-        Serial.println("RIGHT ++");
-        xSemaphoreGive(xSemaphore);
+        // xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY);
+        // Serial.println("RIGHT ++");
+        // xSemaphoreGive(xSemaphore);
       }
       if (counterClockState_right == 0b1011 || counterClockState_right == 0b1101 || counterClockState_right == 0b1110 || counterClockState_right == 0b1111)
       {
         right_enc_pos--;
-        xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY);
-        Serial.println("RIGHT --");
-        xSemaphoreGive(xSemaphore);
+        // xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY);
+        // Serial.println("RIGHT --");
+        // xSemaphoreGive(xSemaphore);
       }
 
       clockState_right = 0;
@@ -201,16 +201,16 @@ void left_ENC(void *pvParameters)
       if (clockState == 0b1011 || clockState == 0b1101 || clockState == 0b1110 || clockState == 0b1111)
       {
         left_enc_pos++;
-        xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY);
-        Serial.println("LEFT ++");
-        xSemaphoreGive(xSemaphore);
+        // xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY);
+        // Serial.println("LEFT ++");
+        // xSemaphoreGive(xSemaphore);
       }
       if (counterClockState == 0b1011 || counterClockState == 0b1101 || counterClockState == 0b1110 || counterClockState == 0b1111)
       {
         left_enc_pos--;
-        xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY);
-        Serial.println("LEFT --");
-        xSemaphoreGive(xSemaphore);
+        // xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY);
+        // Serial.println("LEFT --");
+        // xSemaphoreGive(xSemaphore);
       }
 
       clockState = 0;
