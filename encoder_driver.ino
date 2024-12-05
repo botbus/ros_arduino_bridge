@@ -83,22 +83,22 @@ void initMotorPins()
 }
 void PIN_ISR_LEFT()
 {
-  // run_left_ISR = true;
+  run_left_ISR = true;
 
-  long gpio_states = sio_hw->gpio_in;
-  static uint8_t enc_last = 0;
-  enc_last <<= 2;
-  enc_last |= ((gpio_states >> LEFT_ENC_PIN_A) << 1) | (gpio_states >> LEFT_ENC_PIN_B);
-  left_enc_pos += ENC_STATES[(enc_last & 0x0f)];
+  // long gpio_states = sio_hw->gpio_in;
+  // static uint8_t enc_last = 0;
+  // enc_last <<= 2;
+  // enc_last |= ((gpio_states >> LEFT_ENC_PIN_A) << 1) | (gpio_states >> LEFT_ENC_PIN_B);
+  // left_enc_pos += ENC_STATES[(enc_last & 0x0f)];
 }
 void PIN_ISR_RIGHT()
 {
-  // run_right_ISR = true;
-  long gpio_states = sio_hw->gpio_in;
-  static uint8_t enc_last = 0;
-  enc_last <<= 2;
-  enc_last |= ((gpio_states >> RIGHT_ENC_PIN_A) << 1) | (gpio_states >> RIGHT_ENC_PIN_B);
-  right_enc_pos += ENC_STATES[(enc_last & 0x0f)];
+  run_right_ISR = true;
+  // long gpio_states = sio_hw->gpio_in;
+  // static uint8_t enc_last = 0;
+  // enc_last <<= 2;
+  // enc_last |= ((gpio_states >> RIGHT_ENC_PIN_A) << 1) | (gpio_states >> RIGHT_ENC_PIN_B);
+  // right_enc_pos += ENC_STATES[(enc_last & 0x0f)];
 }
 
 void RUN_PIN_ISR_LEFT(void *pvParameters)
@@ -120,11 +120,17 @@ void RUN_PIN_ISR_LEFT(void *pvParameters)
       if (xSemaphoreTake(xSemaphoreENC, (TickType_t)portMAX_DELAY) == pdTRUE)
       {
         // xSemaphoreTake(xSemaphoreENC, (TickType_t)portMAX_DELAY);
-        static uint8_t enc_last = 0;
-        enc_last <<= 2;
-        uint8_t current_state = (digitalRead(LEFT_ENC_PIN_A) << 1) | digitalRead(LEFT_ENC_PIN_B);
-        enc_last |= current_state;
-        left_enc_pos += ENC_STATES[(enc_last & 0x0f)];
+        // static uint8_t enc_last = 0;
+        // enc_last <<= 2;
+        // // uint8_t current_state = (digitalRead(LEFT_ENC_PIN_A) << 1) | digitalRead(LEFT_ENC_PIN_B);
+        // enc_last |= current_state;
+        // left_enc_pos += ENC_STATES[(enc_last & 0x0f)];
+
+          long gpio_states = sio_hw->gpio_in;
+  static uint8_t enc_last = 0;
+  enc_last <<= 2;
+  enc_last |= ((gpio_states >> LEFT_ENC_PIN_A) << 1) | (gpio_states >> LEFT_ENC_PIN_B);
+  left_enc_pos += ENC_STATES[(enc_last & 0x0f)];
         // xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY);
         // Serial.print("LEFT A:  ");
         // Serial.print(digitalRead(LEFT_ENC_PIN_A));
@@ -161,14 +167,20 @@ void RUN_PIN_ISR_RIGHT(void *pvParameters)
       {
         noInterrupts();
         // xSemaphoreTake(xSemaphoreENC, (TickType_t)portMAX_DELAY);
-        static uint8_t r_enc_last = 0;
+        // static uint8_t r_enc_last = 0;
 
-        r_enc_last <<= 2;
+        // r_enc_last <<= 2;
 
-        uint8_t current_state = (digitalRead(RIGHT_ENC_PIN_A) << 1) | digitalRead(RIGHT_ENC_PIN_B);
-        r_enc_last |= current_state;
-        right_enc_pos += ENC_STATES[(r_enc_last & 0x0f)];
-        run_right_ISR = false;
+        // uint8_t current_state = (digitalRead(RIGHT_ENC_PIN_A) << 1) | digitalRead(RIGHT_ENC_PIN_B);
+        // r_enc_last |= current_state;
+        // right_enc_pos += ENC_STATES[(r_enc_last & 0x0f)];
+        // run_right_ISR = false;
+
+        long gpio_states = sio_hw->gpio_in;
+        static uint8_t enc_last = 0;
+        enc_last <<= 2;
+        enc_last |= ((gpio_states >> RIGHT_ENC_PIN_A) << 1) | (gpio_states >> RIGHT_ENC_PIN_B);
+        right_enc_pos += ENC_STATES[(enc_last & 0x0f)];
         // Serial.println("RIGHT RUNNING");
         // xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY);
         // Serial.print("RIGHT A: ");
