@@ -108,6 +108,7 @@ void right_ENC()
   Serial.print(val,BIN);
   Serial.print("   :   ");
   Serial.println(ENC_STATES[prevVal][val]);
+  prevVal = val;
 }
 long readEncoder(int i)
 {
