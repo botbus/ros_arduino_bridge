@@ -136,12 +136,16 @@ void right_ENC(void *pvParameters)
       // make sure it's gone through at least 3 of those (and assume if one is missing it's because I didn't read fast enough)
       if (clockState == 0b1011 || clockState == 0b1101 || clockState == 0b1110 || clockState == 0b1111)
       {
-        // Serial.println("Result was clockwise");
+        xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY);
+        Serial.println("RIGHT ++");
+         xSemaphoreGive(xSemaphore);
         right_enc_pos++;
       }
       if (counterClockState == 0b1011 || counterClockState == 0b1101 || counterClockState == 0b1110 || counterClockState == 0b1111)
       {
-        // Serial.println("Result was COUNTER clockwise");
+        xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY);
+        Serial.println("RIGHT --");
+         xSemaphoreGive(xSemaphore);
         right_enc_pos--;
       }
 
@@ -192,12 +196,16 @@ void left_ENC(void *pvParameters)
       // make sure it's gone through at least 3 of those (and assume if one is missing it's because I didn't read fast enough)
       if (clockState == 0b1011 || clockState == 0b1101 || clockState == 0b1110 || clockState == 0b1111)
       {
-        // Serial.println("Result was clockwise");
+        xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY);
+        Serial.println("LEFT ++");
+         xSemaphoreGive(xSemaphore);
         left_enc_pos++;
       }
       if (counterClockState == 0b1011 || counterClockState == 0b1101 || counterClockState == 0b1110 || counterClockState == 0b1111)
       {
-        // Serial.println("Result was COUNTER clockwise");
+        xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY);
+        Serial.println("LEFT --");
+         xSemaphoreGive(xSemaphore);
         left_enc_pos--;
       }
 

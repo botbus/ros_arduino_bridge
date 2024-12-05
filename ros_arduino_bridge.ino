@@ -144,7 +144,7 @@ void motor_driver(void *pvParameters)
   xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY);
   Serial.println("started motor driver task");
   xSemaphoreGive(xSemaphore);
-  const TickType_t yDelay = 3 / portTICK_PERIOD_MS;
+  const TickType_t yDelay = 100 / portTICK_PERIOD_MS;
   initMotorController();
   resetPID();
   delay(100);
