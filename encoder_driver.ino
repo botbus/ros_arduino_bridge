@@ -4,11 +4,10 @@
 
 volatile long left_enc_pos = 0L;
 volatile long right_enc_pos = 0L;
-static const int ENC_STATES[] = {
-    0, -1, 1, 2,
-    1, 0, 2, -1,
-    -1, 2, 0, 1,
-    2, 1, -1, 0};
+static const int ENC_STATES[4][4] = {{0, -1, 1, 2},
+                                     {1, 0, 2, -1},
+                                     {-1, 2, 0, 1},
+                                     {2, 1, -1, 0}};
 
 const TickType_t ENCDelay = 1 / portTICK_PERIOD_MS;
 
@@ -61,11 +60,10 @@ void RUN_PIN_ISR_LEFT(void *pvParameters)
         static uint8_t enc_last = 0;
         enc_last <<= 2;
         enc_last |= ((gpio_states >> LEFT_ENC_PIN_A << 1) | (gpio_states >> LEFT_ENC_PIN_B));
-        left_enc_pos += ENC_STATES[(enc_last & 0x0f)];
+        // left_enc_pos += ENC_STATES[(enc_last & 0x0f)];
 
         interrupts();
         xSemaphoreGive(xSemaphoreENC);
-      
       }
     }
     vTaskDelay(ENCDelay);
@@ -89,7 +87,7 @@ void RUN_PIN_ISR_RIGHT(void *pvParameters)
         static uint8_t enc_last_right = 0;
         enc_last_right <<= 2;
         enc_last_right |= ((gpio_states >> RIGHT_ENC_PIN_B) << 1) | (gpio_states >> RIGHT_ENC_PIN_B);
-        right_enc_pos += ENC_STATES[(enc_last_right & 0x0f)];
+        // right_enc_pos += ENC_STATES[(enc_last_right & 0x0f)];
 
         interrupts();
         xSemaphoreGive(xSemaphoreENC);
@@ -99,19 +97,17 @@ void RUN_PIN_ISR_RIGHT(void *pvParameters)
   }
 }
 
-
 void right_ENC()
 {
   // static int prevVal = (digitalRead(RIGHT_ENC_PIN_A) << 1) | digitalRead(RIGHT_ENC_PIN_B);
-  static int prevVal = digitalRead(RIGHT_ENC_PIN_A) << 1) | digitalRead(RIGHT_ENC_PIN_B);;
-  int val =  (digitalRead(RIGHT_ENC_PIN_A) << 1) | digitalRead(RIGHT_ENC_PIN_B);
-  
+  static int prevVal = (digitalRead(RIGHT_ENC_PIN_A) << 1) | digitalRead(RIGHT_ENC_PIN_B);
+  int val = (digitalRead(RIGHT_ENC_PIN_A) << 1) | digitalRead(RIGHT_ENC_PIN_B);
+
   Serial.print(prevVal);
   Serial.print("   :   ");
   Serial.print(val);
-  Serial.print("   :   ")
+  Serial.print("   :   ");
   Serial.println(ENC_STATES[prevVal][val]);
-
 }
 long readEncoder(int i)
 {
