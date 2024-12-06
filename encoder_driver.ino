@@ -168,6 +168,9 @@ void left_ENC(void *pvParameters)
   int newVal_left{0};
   unsigned int clockState_left = 0;
   unsigned int counterClockState_left = 0;
+  gpio_set_dir(LEFT_ENC_PIN_A, false);
+  gpio_pull_up(LEFT_ENC_PIN_A);
+
   while (1)
   {
     // static int prevVal_left = (digitalRead(RIGHT_ENC_PIN_A) << 1) | digitalRead(RIGHT_ENC_PIN_B);
@@ -179,7 +182,7 @@ void left_ENC(void *pvParameters)
     long gpio_states = sio_hw->gpio_in;
     int valA_right = gpio_states >> RIGHT_ENC_PIN_A;
     int valB_right = gpio_states >> RIGHT_ENC_PIN_B;
-    int valA_left = gpio_states >> LEFT_ENC_PIN_A;
+    int valA_left = (gpio_states >> LEFT_ENC_PIN_A) &1;
     int valB_left = gpio_states >> LEFT_ENC_PIN_B;
   xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY);
   Serial.print(valA_left);
