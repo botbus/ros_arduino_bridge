@@ -170,6 +170,13 @@ void left_ENC(void *pvParameters)
   unsigned int counterClockState_left = 0;
   gpio_set_dir(LEFT_ENC_PIN_A, false);
   gpio_pull_up(LEFT_ENC_PIN_A);
+  gpio_set_dir(LEFT_ENC_PIN_B, false);
+  gpio_pull_up(LEFT_ENC_PIN_B);
+
+  gpio_set_dir(RIGHT_ENC_PIN_A, false);
+  gpio_pull_up(RIGHT_ENC_PIN_A);
+  gpio_set_dir(RIGHT_ENC_PIN_B, false);
+  gpio_pull_up(RIGHT_ENC_PIN_B);
 
   while (1)
   {
@@ -180,15 +187,15 @@ void left_ENC(void *pvParameters)
       right_enc_pos.store(0);
     }
     long gpio_states = sio_hw->gpio_in;
-    int valA_right = gpio_states >> RIGHT_ENC_PIN_A;
-    int valB_right = gpio_states >> RIGHT_ENC_PIN_B;
-    int valA_left = (gpio_states >> LEFT_ENC_PIN_A) &1;
-    int valB_left = gpio_states >> LEFT_ENC_PIN_B;
-  xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY);
-  Serial.print(valA_left);
-  Serial.print("     ");
-  Serial.println(digitalRead(LEFT_ENC_PIN_A));
-  xSemaphoreGive(xSemaphore);
+    int valA_right = gpio_states >> (RIGHT_ENC_PIN_A) & 1;
+    int valB_right = gpio_states >> (RIGHT_ENC_PIN_B) & 1;
+    int valA_left = (gpio_states >> LEFT_ENC_PIN_A) & 1;
+    int valB_left = gpio_states >> (LEFT_ENC_PIN_B) & 1;
+    // xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY);
+    // Serial.print(valA_left);
+    // Serial.print("     ");
+    // Serial.println(digitalRead(LEFT_ENC_PIN_A));
+    // xSemaphoreGive(xSemaphore);
     static int prevVal_right = (valA_right << 1) + valB_right;
     newVal_right = (valA_right << 1) + valB_right;
 
@@ -267,10 +274,9 @@ void left_ENC(void *pvParameters)
     }
     prevVal_right = newVal_right;
     prevVal_left = newVal_left;
-    vTaskDelay(ENCDelay);
+    // vTaskDelay(ENCDelay);
   }
 }
-
 
 long readEncoder(int i)
 {
