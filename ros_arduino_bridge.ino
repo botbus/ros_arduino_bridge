@@ -48,6 +48,7 @@
 // #include <RP2040_FreeRTOS.h>
 #include <task.h>
 #include <semphr.h>
+#include <atomic>
 #include "pico/stdlib.h"
 #include "hardware/gpio.h"
 // #include "commands.h"
@@ -111,8 +112,8 @@ void setup()
   leftENCTask = xTaskCreateStatic(left_ENC, "leftENC", STACK_SIZE, NULL, configMAX_PRIORITIES - 1, xStack_leftENC, &xTaskBuffer_leftENC);
   vTaskCoreAffinitySet(leftENCTask, 1 << 1); // Core 0
 
-  rightENCTask = xTaskCreateStatic(right_ENC, "rightENC", STACK_SIZE, NULL, configMAX_PRIORITIES - 1, xStack_rightENC, &xTaskBuffer_rightENC);
-  vTaskCoreAffinitySet(rightENCTask, 1 << 1); // Core 0
+  // rightENCTask = xTaskCreateStatic(right_ENC, "rightENC", STACK_SIZE, NULL, configMAX_PRIORITIES - 1, xStack_rightENC, &xTaskBuffer_rightENC);
+  // vTaskCoreAffinitySet(rightENCTask, 1 << 1); // Core 0
 }
 
 // void setup1() {
