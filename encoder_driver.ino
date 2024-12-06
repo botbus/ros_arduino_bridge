@@ -181,7 +181,11 @@ void left_ENC(void *pvParameters)
     int valB_right = gpio_states >> RIGHT_ENC_PIN_B;
     int valA_left = gpio_states >> LEFT_ENC_PIN_A;
     int valB_left = gpio_states >> LEFT_ENC_PIN_B;
-
+  xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY);
+  Serial.print(valA_left);
+  Serial.print("     ");
+  Serial.println(digitalRead(LEFT_ENC_PIN_A));
+  xSemaphoreGive(xSemaphore);
     static int prevVal_right = (valA_right << 1) + valB_right;
     newVal_right = (valA_right << 1) + valB_right;
 
