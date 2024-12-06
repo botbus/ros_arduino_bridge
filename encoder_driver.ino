@@ -185,6 +185,7 @@ void left_ENC(void *pvParameters)
     {
       left_enc_pos.store(0);
       right_enc_pos.store(0);
+      resetEncoderPos = false;
     }
     long gpio_states = sio_hw->gpio_in;
     int valA_right = gpio_states >> (RIGHT_ENC_PIN_A) & 1;
