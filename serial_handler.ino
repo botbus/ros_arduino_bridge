@@ -77,9 +77,11 @@ int runCommand()
     break;
 
   case READ_ENCODERS:
+  // Serial.print("ENC:{")
     Serial.print(readEncoder(LEFT));
-    Serial.print(" ");
+    Serial.print(",");
     Serial.println(readEncoder(RIGHT));
+    // Serial.println("}")
     break;
 
   case RESET_ENCODERS:

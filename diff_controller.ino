@@ -12,7 +12,7 @@
 /* PID Parameters */
 int Kp = 20;
 int Kd = 12;
-int Ki = 0;
+int Ki = 5;
 int Ko = 50;
 SetPointInfo leftPID;
 SetPointInfo rightPID;

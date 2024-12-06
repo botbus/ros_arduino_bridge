@@ -188,10 +188,10 @@ void left_ENC(void *pvParameters)
       resetEncoderPos = false;
     }
     long gpio_states = sio_hw->gpio_in;
-    int valA_right = gpio_states >> (RIGHT_ENC_PIN_A) & 1;
-    int valB_right = gpio_states >> (RIGHT_ENC_PIN_B) & 1;
+    int valA_right = (gpio_states >> RIGHT_ENC_PIN_A) & 1;
+    int valB_right = (gpio_states >> RIGHT_ENC_PIN_B) & 1;
     int valA_left = (gpio_states >> LEFT_ENC_PIN_A) & 1;
-    int valB_left = gpio_states >> (LEFT_ENC_PIN_B) & 1;
+    int valB_left = (gpio_states >> LEFT_ENC_PIN_B) & 1;
     // xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY);
     // Serial.print(valA_left);
     // Serial.print("     ");
