@@ -263,6 +263,8 @@ void left_ENC(void *pvParameters)
     vTaskDelay(ENCDelay);
   }
 }
+
+
 long readEncoder(int i)
 {
   if (i == LEFT)
