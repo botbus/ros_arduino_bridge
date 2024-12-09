@@ -90,13 +90,11 @@ void setup()
 
   wheelENCTask = xTaskCreateStatic(wheelENC, "wheelENC", STACK_SIZE, NULL, configMAX_PRIORITIES - 1, xStack_wheelENC, &xTaskBuffer_wheelENC);
   vTaskCoreAffinitySet(wheelENCTask, 1 << 1);
-
 }
 
 void loop()
 {
 }
-
 
 void motorIMUdriver(void *pvParameters)
 {
@@ -111,65 +109,65 @@ void motorIMUdriver(void *pvParameters)
   while (1)
   {
     readIMU();
-
+    Serial.print("\"ENC\":[");
     Serial.print(readEncoder(LEFT));
     Serial.print(",");
-    Serial.println(readEncoder(RIGHT));
+    Serial.print(readEncoder(RIGHT));
+    Serial.println("]}");
+    while (Serial.available() > 0)
+    {
+      // Read the next character
+      chr = Serial.read();
 
-      while (Serial.available() > 0)
+      // Terminate a command with a CR
+      if (chr == 13)
       {
-        // Read the next character
-        chr = Serial.read();
-
-        // Terminate a command with a CR
-        if (chr == 13)
+        if (arg == 1)
+          argv1[indx] = '\0';
+        else if (arg == 2)
+          argv2[indx] = '\0';
+        runCommand();
+        resetCommand();
+      }
+      // Use spaces to delimit parts of the command
+      else if (chr == ' ')
+      {
+        // Step through the arguments
+        if (arg == 0)
+          arg = 1;
+        else if (arg == 1)
         {
-          if (arg == 1)
-            argv1[indx] = '\0';
-          else if (arg == 2)
-            argv2[indx] = '\0';
-          runCommand();
-          resetCommand();
+          argv1[indx] = '\0';
+          arg = 2;
+          indx = 0;
         }
-        // Use spaces to delimit parts of the command
-        else if (chr == ' ')
+        continue;
+      }
+      else
+      {
+        if (arg == 0)
         {
-          // Step through the arguments
-          if (arg == 0)
-            arg = 1;
-          else if (arg == 1)
-          {
-            argv1[indx] = '\0';
-            arg = 2;
-            indx = 0;
-          }
-          continue;
+          // The first arg is the single-letter command
+          cmd = chr;
         }
-        else
+        else if (arg == 1)
         {
-          if (arg == 0)
-          {
-            // The first arg is the single-letter command
-            cmd = chr;
-          }
-          else if (arg == 1)
-          {
-            // Subsequent arguments can be more than one character
-            argv1[indx] = chr;
-            indx++;
-          }
-          else if (arg == 2)
-          {
-            argv2[indx] = chr;
-            indx++;
-          }
+          // Subsequent arguments can be more than one character
+          argv1[indx] = chr;
+          indx++;
+        }
+        else if (arg == 2)
+        {
+          argv2[indx] = chr;
+          indx++;
         }
       }
+    }
 
-      if (millis() > nextPID)
-      {
-        updatePID();
-        nextPID += PID_INTERVAL;
-      }
+    if (millis() > nextPID)
+    {
+      updatePID();
+      nextPID += PID_INTERVAL;
+    }
   }
 }

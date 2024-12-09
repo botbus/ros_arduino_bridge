@@ -112,27 +112,27 @@ void printFormattedFloat(float val, uint8_t leading, uint8_t decimals) {
 
 void printScaledAGMT(ICM_20948_SPI *sensor) {
 
-  Serial.print("Acc (mg)[ ");
+  Serial.print("{\"ACC\":[");
   printFormattedFloat(sensor->accX(), 5, 2);
-  Serial.print(", ");
+  Serial.print(",");
   printFormattedFloat(sensor->accY(), 5, 2);
-  Serial.print(", ");
+  Serial.print(",");
   printFormattedFloat(sensor->accZ(), 5, 2);
-  Serial.print(" ], Gyro[ ");
+  Serial.print("],\"GYR\":[");
   printFormattedFloat(sensor->gyrX(), 5, 2);
-  Serial.print(", ");
+  Serial.print(",");
   printFormattedFloat(sensor->gyrY(), 5, 2);
-  Serial.print(", ");
+  Serial.print(",");
   printFormattedFloat(sensor->gyrZ(), 5, 2);
-  Serial.print(" ], Mag(uT)[ ");
+  Serial.print("],\"MAG\":[");
   printFormattedFloat(sensor->magX(), 5, 2);
-  Serial.print(", ");
+  Serial.print(",");
   printFormattedFloat(sensor->magY(), 5, 2);
-  Serial.print(", ");
+  Serial.print(",");
   printFormattedFloat(sensor->magZ(), 5, 2);
-  Serial.print(" ], Tmp(C)[ ");
+  Serial.print("],\"TMP\":[");
   printFormattedFloat(sensor->temp(), 5, 2);
-  Serial.print(" ]");
+  Serial.print("],");
   // Serial.println();
 }
 
