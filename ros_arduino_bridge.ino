@@ -45,6 +45,7 @@
  *  POSSIBILITY OF SUCH DAMAGE.
  *********************************************************************/
 #include <FreeRTOS.h>
+#include <string>
 #include <task.h>
 #include <semphr.h>
 #include <atomic>
@@ -108,12 +109,13 @@ void motorIMUdriver(void *pvParameters)
   delay(100);
   while (1)
   {
-    readIMU();
-    Serial.print("\"ENC\":[");
-    Serial.print(readEncoder(LEFT));
-    Serial.print(",");
-    Serial.print(readEncoder(RIGHT));
-    Serial.println("]}");
+    std::string sharedBuffer{};
+    sharedBuffer = readIMU();
+    sharedBuffer += "\"ENC\":[";
+    sharedBuffer += std::to_string(readEncoder(LEFT));
+    sharedBuffer += ",";
+    sharedBuffer += std::to_string(readEncoder(RIGHT));
+    sharedBuffer += "]}";
     while (Serial.available() > 0)
     {
       // Read the next character
@@ -126,7 +128,7 @@ void motorIMUdriver(void *pvParameters)
           argv1[indx] = '\0';
         else if (arg == 2)
           argv2[indx] = '\0';
-        runCommand();
+        runCommand(sharedBuffer);
         resetCommand();
       }
       // Use spaces to delimit parts of the command

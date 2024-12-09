@@ -1,10 +1,12 @@
 
+#include <string>
 #include "include/commands.h"
 #include "include/setup_definitions.h"
 #include "include/motor_driver.h"
 #include "include/diff_controller.h"
 #include "include/encoder_driver.h"
 #include "include/serial_handler.h"
+
 char cmd;
 // A pair of varibles to help parse serial commands (thanks Fergs)
 int arg = 0;
@@ -32,7 +34,7 @@ void resetCommand()
 }
 
 /* Run a command.  Commands are defined in commands.h */
-int runCommand()
+int runCommand(std::string sharedBuffer)
 {
   int i = 0;
   char *p = argv1;
@@ -76,13 +78,14 @@ int runCommand()
     // Serial.println("OK");
     break;
 
-  // case READ_ENCODERS:
-  // // Serial.print("ENC:{")
-  //   Serial.print(readEncoder(LEFT));
-  //   Serial.print(",");
-  //   Serial.println(readEncoder(RIGHT));
-  //   // Serial.println("}")
-  //   break;
+  case READ_ENCODERS:
+  // Serial.print("ENC:{")
+    // Serial.print(readEncoder(LEFT));
+    // Serial.print(",");
+    // Serial.println(readEncoder(RIGHT));
+    // Serial.println("}")
+    Serial.println(sharedBuffer.c_str());
+    break;
 
   case RESET_ENCODERS:
     resetEncoders();

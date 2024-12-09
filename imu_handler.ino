@@ -1,3 +1,6 @@
+
+#include <string>
+
 #include "include/imu_handler.h"
 // char IMUBuffer[500];
 void initIMU()
@@ -116,43 +119,64 @@ void initIMU()
 //   }
 // }
 
-void printScaledAGMT(ICM_20948_SPI *sensor)
+std::string printScaledAGMT(ICM_20948_SPI *sensor)
 {
-
-  Serial.print("{\"ACC\":[");
-  Serial.print(sensor->accX(), 2);
-  Serial.print(",");
-  Serial.print(sensor->accY(), 2);
-  Serial.print(",");
-  Serial.print(sensor->accZ(), 2);
-  Serial.print("],\"GYR\":[");
-  Serial.print(sensor->gyrX(), 2);
-  Serial.print(",");
-  Serial.print(sensor->gyrY(), 2);
-  Serial.print(",");
-  Serial.print(sensor->gyrZ(), 2);
-  Serial.print("],\"MAG\":[");
-  Serial.print(sensor->magX(), 2);
-  Serial.print(",");
-  Serial.print(sensor->magY(), 2);
-  Serial.print(",");
-  Serial.print(sensor->magZ(), 2);
-  Serial.print("],\"TMP\":[");
-  Serial.print(sensor->temp(), 2);
-  Serial.print("],");
-  // Serial.println();
+   std::string jsonString;
+    jsonString += ",";
+    jsonString += std::to_string(sensor->accY());
+    jsonString += ",";
+    jsonString += std::to_string(sensor->accZ());
+    jsonString += "],\"GYR\":[";
+    jsonString += std::to_string(sensor->gyrX());
+    jsonString += ",";
+    jsonString += std::to_string(sensor->gyrY());
+    jsonString += ",";
+    jsonString += std::to_string(sensor->gyrZ());
+    jsonString += "],\"MAG\":[";
+    jsonString += std::to_string(sensor->magX());
+    jsonString += ",";
+    jsonString += std::to_string(sensor->magY());
+    jsonString += ",";
+    jsonString += std::to_string(sensor->magZ());
+    jsonString += "],\"TMP\":[";
+    jsonString += std::to_string(sensor->temp());
+    jsonString += "],";
+return jsonString;
+  // Serial.print("{\"ACC\":[");
+  // Serial.print(sensor->accX(), 2);
+  // Serial.print(",");
+  // Serial.print(sensor->accY(), 2);
+  // Serial.print(",");
+  // Serial.print(sensor->accZ(), 2);
+  // Serial.print("],\"GYR\":[");
+  // Serial.print(sensor->gyrX(), 2);
+  // Serial.print(",");
+  // Serial.print(sensor->gyrY(), 2);
+  // Serial.print(",");
+  // Serial.print(sensor->gyrZ(), 2);
+  // Serial.print("],\"MAG\":[");
+  // Serial.print(sensor->magX(), 2);
+  // Serial.print(",");
+  // Serial.print(sensor->magY(), 2);
+  // Serial.print(",");
+  // Serial.print(sensor->magZ(), 2);
+  // Serial.print("],\"TMP\":[");
+  // Serial.print(sensor->temp(), 2);
+  // Serial.print("],");
+  // // Serial.println();
 }
-
-void readIMU()
+std::string readIMU()
 {
   if (myICM.dataReady())
   {
     myICM.getAGMT();
-    printScaledAGMT(&myICM);
+   std::string sharedBuffer = printScaledAGMT(&myICM);
+   return sharedBuffer;
   }
   else
   {
     Serial.println("Waiting for data");
     delay(500);
+    return std::string("no imu data found");
   }
 }
