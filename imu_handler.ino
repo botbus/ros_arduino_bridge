@@ -1,21 +1,25 @@
 #include "include/imu_handler.h"
 // char IMUBuffer[500];
-void initIMU() {
+void initIMU()
+{
   SPI_PORT.setSCK(SCK_PIN);
   SPI_PORT.setMOSI(MOSI_PIN);
   SPI_PORT.setMISO(MISO_PIN);
   SPI_PORT.begin();
 
-
   bool initialized = false;
-  while (!initialized) {
+  while (!initialized)
+  {
     myICM.begin(CS_PIN, SPI_PORT);
     Serial.print(F("Initialization status: "));
     Serial.println(myICM.statusString());
-    if (myICM.status != ICM_20948_Stat_Ok) {
+    if (myICM.status != ICM_20948_Stat_Ok)
+    {
       Serial.println("Trying again...");
       delay(500);
-    } else {
+    }
+    else
+    {
       initialized = true;
     }
   }
@@ -80,69 +84,74 @@ void initIMU() {
 //   Serial.print(" ]");
 //   Serial.println();
 // }
+// void printFormattedFloat(float val, uint8_t leading, uint8_t decimals)
+// {
+//   // float aval = abs(val);
+//   // if (val < 0) {
+//   //   Serial.print("-");
+//   // } else {
+//   //   Serial.print(" ");
+//   // }
+//   // for (uint8_t indi = 0; indi < leading; indi++) {
+//   //   uint32_t tenpow = 0;
+//   //   if (indi < (leading - 1)) {
+//   //     tenpow = 1;
+//   //   }
+//   //   for (uint8_t c = 0; c < (leading - 1 - indi); c++) {
+//   //     tenpow *= 10;
+//   //   }
+//   //   if (aval < tenpow) {
+//   //     Serial.print("0");
+//   //   } else {
+//   //     break;
+//   //   }
+//   // }
+//   if (val < 0)
+//   {
+//     Serial.print(-val, decimals);
+//   }
+//   else
+//   {
+//     Serial.print(val, decimals);
+//   }
+// }
 
-void printFormattedFloat(float val, uint8_t leading, uint8_t decimals) {
-  // float aval = abs(val);
-  // if (val < 0) {
-  //   Serial.print("-");
-  // } else {
-  //   Serial.print(" ");
-  // }
-  // for (uint8_t indi = 0; indi < leading; indi++) {
-  //   uint32_t tenpow = 0;
-  //   if (indi < (leading - 1)) {
-  //     tenpow = 1;
-  //   }
-  //   for (uint8_t c = 0; c < (leading - 1 - indi); c++) {
-  //     tenpow *= 10;
-  //   }
-  //   if (aval < tenpow) {
-  //     Serial.print("0");
-  //   } else {
-  //     break;
-  //   }
-  // }
-  if (val < 0) {
-    Serial.print(-val, decimals);
-  } else {
-    Serial.print(val, decimals);
-  }
-}
-
-
-void printScaledAGMT(ICM_20948_SPI *sensor) {
+void printScaledAGMT(ICM_20948_SPI *sensor)
+{
 
   Serial.print("{\"ACC\":[");
-  printFormattedFloat(sensor->accX(), 5, 2);
+  Serial.print(sensor->accX(), 2);
   Serial.print(",");
-  printFormattedFloat(sensor->accY(), 5, 2);
+  Serial.print(sensor->accY(), 2);
   Serial.print(",");
-  printFormattedFloat(sensor->accZ(), 5, 2);
+  Serial.print(sensor->accZ(), 2);
   Serial.print("],\"GYR\":[");
-  printFormattedFloat(sensor->gyrX(), 5, 2);
+  Serial.print(sensor->gyrX(), 2);
   Serial.print(",");
-  printFormattedFloat(sensor->gyrY(), 5, 2);
+  Serial.print(sensor->gyrY(), 2);
   Serial.print(",");
-  printFormattedFloat(sensor->gyrZ(), 5, 2);
+  Serial.print(sensor->gyrZ(), 2);
   Serial.print("],\"MAG\":[");
-  printFormattedFloat(sensor->magX(), 5, 2);
+  Serial.print(sensor->magX(), 2);
   Serial.print(",");
-  printFormattedFloat(sensor->magY(), 5, 2);
+  Serial.print(sensor->magY(), 2);
   Serial.print(",");
-  printFormattedFloat(sensor->magZ(), 5, 2);
+  Serial.print(sensor->magZ(), 2);
   Serial.print("],\"TMP\":[");
-  printFormattedFloat(sensor->temp(), 5, 2);
+  Serial.print(sensor->temp(), 2);
   Serial.print("],");
   // Serial.println();
 }
 
-
-void readIMU() {
-  if (myICM.dataReady()) {
+void readIMU()
+{
+  if (myICM.dataReady())
+  {
     myICM.getAGMT();
     printScaledAGMT(&myICM);
- 
-  } else {
+  }
+  else
+  {
     Serial.println("Waiting for data");
     delay(500);
   }
