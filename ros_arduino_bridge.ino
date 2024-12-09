@@ -116,7 +116,7 @@ void motorIMUdriver(void *pvParameters)
     sharedBuffer += ",";
     sharedBuffer += std::to_string(readEncoder(RIGHT));
     sharedBuffer += "]}||";
-Serial.flush();
+    Serial.flush();
     Serial.println(sharedBuffer.c_str());
     while (Serial.available() > 0)
     {
@@ -172,6 +172,13 @@ Serial.flush();
     {
       updatePID();
       nextPID += PID_INTERVAL;
+    }
+    // Check to see if we have exceeded the auto-stop interval
+    if ((millis() - lastMotorCommand) > AUTO_STOP_INTERVAL)
+    {
+     
+      setMotorSpeeds(0, 0);
+      moving = 0;
     }
   }
 }
