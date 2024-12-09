@@ -122,7 +122,7 @@ void initIMU()
 std::string printScaledAGMT(ICM_20948_SPI *sensor)
 {
   std::string jsonString{};
-  jsonString = "{||\"ACC\":[";
+  jsonString = "{\"ACC\":[";
   jsonString += std::to_string(sensor->accX());
   jsonString += ",";
   jsonString += std::to_string(sensor->accY());
