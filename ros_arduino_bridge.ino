@@ -51,7 +51,7 @@
 #include <atomic>
 #include "pico/stdlib.h"
 #include "hardware/gpio.h"
-// #include "commands.h"
+#include "include/commands.h"
 #include "include/imu_handler.h"
 #include "include/setup_definitions.h"
 
@@ -106,8 +106,8 @@ void setup()
   motorTask = xTaskCreateStatic(motor_driver, "motor_driver", STACK_SIZE, NULL, configMAX_PRIORITIES - 1, xStack_motor, &xTaskBuffer_motor);
   vTaskCoreAffinitySet(motorTask, 1 << 0); // Core 0
 
-  imuTask = xTaskCreateStatic(imu_driver, "imu_driver", STACK_SIZE, NULL, configMAX_PRIORITIES - 2, xStack_imu, &xTaskBuffer_imu);
-  vTaskCoreAffinitySet(imuTask, 1 << 0); // Core 1
+  // imuTask = xTaskCreateStatic(imu_driver, "imu_driver", STACK_SIZE, NULL, configMAX_PRIORITIES - 2, xStack_imu, &xTaskBuffer_imu);
+  // vTaskCoreAffinitySet(imuTask, 1 << 0); // Core 1
 
   leftENCTask = xTaskCreateStatic(left_ENC, "leftENC", STACK_SIZE, NULL, configMAX_PRIORITIES - 1, xStack_leftENC, &xTaskBuffer_leftENC);
   vTaskCoreAffinitySet(leftENCTask, 1 << 1); // Core 0
@@ -132,7 +132,7 @@ void imu_driver(void *pvParameters)
   delay(100);
   while (1)
   { // Serial.println("reading imu");
-    //  readIMU(xDelay);
+    //
   }
 }
 void loop()
@@ -155,16 +155,20 @@ void motor_driver(void *pvParameters)
     //   RUN_PIN_ISR_RIGHT();
     // if (run_left_ISR)
     //  RUN_PIN_ISR_LEFT();
+    readIMU();
 
+    Serial.print(readEncoder(LEFT));
+    Serial.print(",");
+    Serial.println(readEncoder(RIGHT));
     // Serial.println("Reading motor driver");
-    if (xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY) == pdTRUE)
-    {
+    // if (xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY) == pdTRUE)
+    // {
       // if (run_right_ISR)
       // Serial.println("Active");
       // Serial.print(run_right_ISR);
       // Serial.print("     ");
       // Serial.println(run_left_ISR);
-      
+
       while (Serial.available() > 0)
       {
         // Read the next character
@@ -225,8 +229,8 @@ void motor_driver(void *pvParameters)
       //   moving = 0;
       //   }
 
-      xSemaphoreGive(xSemaphore);
-      vTaskDelay(yDelay);
-    }
+    //   xSemaphoreGive(xSemaphore);
+    //   vTaskDelay(yDelay);
+    // }
   }
 }

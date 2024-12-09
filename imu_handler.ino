@@ -112,40 +112,40 @@ void printFormattedFloat(float val, uint8_t leading, uint8_t decimals) {
 // #ifdef USE_SPI
 void printScaledAGMT(ICM_20948_SPI *sensor) {
 
-  Serial.print("Scaled. Acc (mg) [ ");
+  Serial.print("Acc (mg)[ ");
   printFormattedFloat(sensor->accX(), 5, 2);
   Serial.print(", ");
   printFormattedFloat(sensor->accY(), 5, 2);
   Serial.print(", ");
   printFormattedFloat(sensor->accZ(), 5, 2);
-  Serial.print(" ], Gyr (DPS) [ ");
+  Serial.print(" ], Gyro[ ");
   printFormattedFloat(sensor->gyrX(), 5, 2);
   Serial.print(", ");
   printFormattedFloat(sensor->gyrY(), 5, 2);
   Serial.print(", ");
   printFormattedFloat(sensor->gyrZ(), 5, 2);
-  Serial.print(" ], Mag (uT) [ ");
+  Serial.print(" ], Mag(uT)[ ");
   printFormattedFloat(sensor->magX(), 5, 2);
   Serial.print(", ");
   printFormattedFloat(sensor->magY(), 5, 2);
   Serial.print(", ");
   printFormattedFloat(sensor->magZ(), 5, 2);
-  Serial.print(" ], Tmp (C) [ ");
+  Serial.print(" ], Tmp(C)[ ");
   printFormattedFloat(sensor->temp(), 5, 2);
   Serial.print(" ]");
-  Serial.println();
+  // Serial.println();
 }
 
 
-void readIMU(const TickType_t & xDelay) {
+void readIMU() {
   if (myICM.dataReady()) {
     myICM.getAGMT();
     // IMUBuffer = '\0';
-    xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY);
+    // xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY);
     // if (xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY) == pdTRUE) {
     printScaledAGMT(&myICM);
-    xSemaphoreGive(xSemaphore);
-    vTaskDelay(xDelay);
+    // xSemaphoreGive(xSemaphore);
+    // vTaskDelay(xDelay);
     // }
  
   } else {

@@ -57,7 +57,7 @@ int runCommand()
 
   case ANALOG_WRITE:
     analogWrite(arg1, arg2);
-    Serial.println("OK");
+    // Serial.println("OK");
     break;
 
   case DIGITAL_WRITE:
@@ -65,7 +65,7 @@ int runCommand()
       digitalWrite(arg1, LOW);
     else if (arg2 == 1)
       digitalWrite(arg1, HIGH);
-    Serial.println("OK");
+    // Serial.println("OK");
     break;
 
   case PIN_MODE:
@@ -73,21 +73,21 @@ int runCommand()
       pinMode(arg1, INPUT);
     else if (arg2 == 1)
       pinMode(arg1, OUTPUT);
-    Serial.println("OK");
+    // Serial.println("OK");
     break;
 
-  case READ_ENCODERS:
-  // Serial.print("ENC:{")
-    Serial.print(readEncoder(LEFT));
-    Serial.print(",");
-    Serial.println(readEncoder(RIGHT));
-    // Serial.println("}")
-    break;
+  // case READ_ENCODERS:
+  // // Serial.print("ENC:{")
+  //   Serial.print(readEncoder(LEFT));
+  //   Serial.print(",");
+  //   Serial.println(readEncoder(RIGHT));
+  //   // Serial.println("}")
+  //   break;
 
   case RESET_ENCODERS:
     resetEncoders();
     resetPID();
-    Serial.println("OK");
+    // Serial.println("OK");
     break;
 
   case MOTOR_SPEEDS:
@@ -103,7 +103,7 @@ int runCommand()
       moving = 1;
     leftPID.TargetTicksPerFrame = arg1;
     rightPID.TargetTicksPerFrame = arg2;
-    Serial.println("OK");
+    // Serial.println("OK");
     break;
   case MOTOR_RAW_PWM:
     /* Reset the auto stop timer */
@@ -111,7 +111,7 @@ int runCommand()
     resetPID();
     moving = 0; // Sneaky way to temporarily disable the PID
     setMotorSpeeds(arg1, arg2);
-    Serial.println("OK");
+    // Serial.println("OK");
     break;
   case UPDATE_PID:
     while ((str = strtok_r(p, ":", &p)) != NULL)
@@ -123,11 +123,11 @@ int runCommand()
     Kd = pid_args[1];
     Ki = pid_args[2];
     Ko = pid_args[3];
-    Serial.println("OK");
+    // Serial.println("OK");
     break;
 
   default:
-    Serial.println("Invalid Command");
+    // Serial.println("Invalid Command");
     return -1;
   }
   return 0;
