@@ -115,7 +115,9 @@ void motorIMUdriver(void *pvParameters)
     sharedBuffer += std::to_string(readEncoder(LEFT));
     sharedBuffer += ",";
     sharedBuffer += std::to_string(readEncoder(RIGHT));
-    sharedBuffer += "]}\r\n";
+    sharedBuffer += "]}||";
+
+    Serial.println(sharedBuffer.c_str());
     while (Serial.available() > 0)
     {
       // Read the next character

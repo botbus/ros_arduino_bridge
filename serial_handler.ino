@@ -78,14 +78,14 @@ int runCommand(std::string sharedBuffer)
     // Serial.println("OK");
     break;
 
-  case READ_ENCODERS:
-  // Serial.print("ENC:{")
-    // Serial.print(readEncoder(LEFT));
-    // Serial.print(",");
-    // Serial.println(readEncoder(RIGHT));
-    // Serial.println("}")
-    Serial.println(sharedBuffer.c_str());
-    break;
+  // case READ_ENCODERS:
+  // // Serial.print("ENC:{")
+  //   // Serial.print(readEncoder(LEFT));
+  //   // Serial.print(",");
+  //   // Serial.println(readEncoder(RIGHT));
+  //   // Serial.println("}")
+
+  //   break;
 
   case RESET_ENCODERS:
     resetEncoders();
