@@ -109,7 +109,7 @@ void printFormattedFloat(float val, uint8_t leading, uint8_t decimals) {
   }
 }
 
-// #ifdef USE_SPI
+
 void printScaledAGMT(ICM_20948_SPI *sensor) {
 
   Serial.print("Acc (mg)[ ");
@@ -140,13 +140,7 @@ void printScaledAGMT(ICM_20948_SPI *sensor) {
 void readIMU() {
   if (myICM.dataReady()) {
     myICM.getAGMT();
-    // IMUBuffer = '\0';
-    // xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY);
-    // if (xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY) == pdTRUE) {
     printScaledAGMT(&myICM);
-    // xSemaphoreGive(xSemaphore);
-    // vTaskDelay(xDelay);
-    // }
  
   } else {
     Serial.println("Waiting for data");

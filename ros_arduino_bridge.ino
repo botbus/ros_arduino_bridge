@@ -45,7 +45,6 @@
  *  POSSIBILITY OF SUCH DAMAGE.
  *********************************************************************/
 #include <FreeRTOS.h>
-// #include <RP2040_FreeRTOS.h>
 #include <task.h>
 #include <semphr.h>
 #include <atomic>
@@ -61,35 +60,19 @@
 #include "include/encoder_driver.h"
 unsigned long nextPID = PID_INTERVAL;
 
-/* Dimensions of the buffer that the task being created will use as its stack.
-  NOTE:  This is the number of words the stack will hold, not the number of
-  bytes.  For example, if each stack item is 32-bits, and this is set to 100,
-  then 400 bytes (100 * 32-bits) will be allocated. */
 #define STACK_SIZE 512
 
-/* Structure that will hold the TCB of the task being created. */
-StaticTask_t xTaskBuffer_imu;
-StaticTask_t xTaskBuffer_motor;
-StaticTask_t xTaskBuffer_leftENC;
-StaticTask_t xTaskBuffer_rightENC;
+StaticTask_t xTaskBuffer_motorIMU;
+StaticTask_t xTaskBuffer_wheelENC;
 
-/* Buffer that the task being created will use as its stack.  Note this is
-  an array of StackType_t variables.  The size of StackType_t is dependent on
-  the RTOS port. */
-StackType_t xStack_imu[STACK_SIZE];
-StackType_t xStack_motor[STACK_SIZE];
-StackType_t xStack_leftENC[STACK_SIZE];
-StackType_t xStack_rightENC[STACK_SIZE];
+StackType_t xStack_motorIMU[STACK_SIZE];
+StackType_t xStack_wheelENC[STACK_SIZE];
 
 SemaphoreHandle_t xSemaphore = NULL;
 StaticSemaphore_t xMutexBuffer;
 
-SemaphoreHandle_t xSemaphoreENC = NULL;
-StaticSemaphore_t xMutexBufferENC;
+TaskHandle_t motorIMUTask, wheelENCTask;
 
-TaskHandle_t motorTask, imuTask, leftENCTask, rightENCTask;
-
-/* Setup function--runs once at startup. */
 void setup()
 {
   Serial.begin(BAUDRATE);
@@ -99,47 +82,23 @@ void setup()
   Serial.println("starting system");
   initIMU();
   initMotorPins();
-  // xSemaphore = xSemaphoreCreateMutexStatic(&xMutexVuffer);
+
   xSemaphore = xSemaphoreCreateMutexStatic(&xMutexBuffer);
-  xSemaphoreENC = xSemaphoreCreateMutexStatic(&xMutexBufferENC);
 
-  motorTask = xTaskCreateStatic(motor_driver, "motor_driver", STACK_SIZE, NULL, configMAX_PRIORITIES - 1, xStack_motor, &xTaskBuffer_motor);
-  vTaskCoreAffinitySet(motorTask, 1 << 0); // Core 0
+  motorIMUTask = xTaskCreateStatic(motorIMUdriver, "motorIMUdriver", STACK_SIZE, NULL, configMAX_PRIORITIES - 1, xStack_motorIMU, &xTaskBuffer_motorIMU);
+  vTaskCoreAffinitySet(motorIMUTask, 1 << 0);
 
-  // imuTask = xTaskCreateStatic(imu_driver, "imu_driver", STACK_SIZE, NULL, configMAX_PRIORITIES - 2, xStack_imu, &xTaskBuffer_imu);
-  // vTaskCoreAffinitySet(imuTask, 1 << 0); // Core 1
+  wheelENCTask = xTaskCreateStatic(wheelENC, "wheelENC", STACK_SIZE, NULL, configMAX_PRIORITIES - 1, xStack_wheelENC, &xTaskBuffer_wheelENC);
+  vTaskCoreAffinitySet(wheelENCTask, 1 << 1);
 
-  leftENCTask = xTaskCreateStatic(left_ENC, "leftENC", STACK_SIZE, NULL, configMAX_PRIORITIES - 1, xStack_leftENC, &xTaskBuffer_leftENC);
-  vTaskCoreAffinitySet(leftENCTask, 1 << 1); // Core 0
-
-  // rightENCTask = xTaskCreateStatic(right_ENC, "rightENC", STACK_SIZE, NULL, configMAX_PRIORITIES - 1, xStack_rightENC, &xTaskBuffer_rightENC);
-  // vTaskCoreAffinitySet(rightENCTask, 1 << 1); // Core 0
 }
 
-// void setup1() {
-//   while (!Serial)
-//     ;
-
-// }
-
-void imu_driver(void *pvParameters)
-{
-  (void)pvParameters;
-  xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY);
-  Serial.println("started imu driver task");
-  xSemaphoreGive(xSemaphore);
-  const TickType_t xDelay = 3 / portTICK_PERIOD_MS;
-  delay(100);
-  while (1)
-  { // Serial.println("reading imu");
-    //
-  }
-}
 void loop()
 {
-  // Serial.println("asd");
 }
-void motor_driver(void *pvParameters)
+
+
+void motorIMUdriver(void *pvParameters)
 {
   (void)pvParameters;
   xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY);
@@ -151,23 +110,11 @@ void motor_driver(void *pvParameters)
   delay(100);
   while (1)
   {
-    // if (run_right_ISR)
-    //   RUN_PIN_ISR_RIGHT();
-    // if (run_left_ISR)
-    //  RUN_PIN_ISR_LEFT();
     readIMU();
 
     Serial.print(readEncoder(LEFT));
     Serial.print(",");
     Serial.println(readEncoder(RIGHT));
-    // Serial.println("Reading motor driver");
-    // if (xSemaphoreTake(xSemaphore, (TickType_t)portMAX_DELAY) == pdTRUE)
-    // {
-      // if (run_right_ISR)
-      // Serial.println("Active");
-      // Serial.print(run_right_ISR);
-      // Serial.print("     ");
-      // Serial.println(run_left_ISR);
 
       while (Serial.available() > 0)
       {
@@ -224,13 +171,5 @@ void motor_driver(void *pvParameters)
         updatePID();
         nextPID += PID_INTERVAL;
       }
-      //      if ((millis() - lastMotorCommand) > AUTO_STOP_INTERVAL) {
-      //      setMotorSpeeds(0, 0);
-      //   moving = 0;
-      //   }
-
-    //   xSemaphoreGive(xSemaphore);
-    //   vTaskDelay(yDelay);
-    // }
   }
 }
