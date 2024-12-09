@@ -15,7 +15,7 @@ extern unsigned long nextPID;
 
 /* Stop the robot if it hasn't received a movement command
  in this number of milliseconds */
-constexpr long AUTO_STOP_INTERVAL = 2000;
+constexpr long AUTO_STOP_INTERVAL = 1000;
 extern long lastMotorCommand;
 
 
