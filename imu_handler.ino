@@ -121,27 +121,29 @@ void initIMU()
 
 std::string printScaledAGMT(ICM_20948_SPI *sensor)
 {
-   std::string jsonString;
-    jsonString += ",";
-    jsonString += std::to_string(sensor->accY());
-    jsonString += ",";
-    jsonString += std::to_string(sensor->accZ());
-    jsonString += "],\"GYR\":[";
-    jsonString += std::to_string(sensor->gyrX());
-    jsonString += ",";
-    jsonString += std::to_string(sensor->gyrY());
-    jsonString += ",";
-    jsonString += std::to_string(sensor->gyrZ());
-    jsonString += "],\"MAG\":[";
-    jsonString += std::to_string(sensor->magX());
-    jsonString += ",";
-    jsonString += std::to_string(sensor->magY());
-    jsonString += ",";
-    jsonString += std::to_string(sensor->magZ());
-    jsonString += "],\"TMP\":[";
-    jsonString += std::to_string(sensor->temp());
-    jsonString += "],";
-return jsonString;
+  std::string jsonString{};
+  jsonString = "{\"ACC\":[";
+  jsonString += std::to_string(sensor->accX());
+  jsonString += ",";
+  jsonString += std::to_string(sensor->accY());
+  jsonString += ",";
+  jsonString += std::to_string(sensor->accZ());
+  jsonString += "],\"GYR\":[";
+  jsonString += std::to_string(sensor->gyrX());
+  jsonString += ",";
+  jsonString += std::to_string(sensor->gyrY());
+  jsonString += ",";
+  jsonString += std::to_string(sensor->gyrZ());
+  jsonString += "],\"MAG\":[";
+  jsonString += std::to_string(sensor->magX());
+  jsonString += ",";
+  jsonString += std::to_string(sensor->magY());
+  jsonString += ",";
+  jsonString += std::to_string(sensor->magZ());
+  jsonString += "],\"TMP\":[";
+  jsonString += std::to_string(sensor->temp());
+  jsonString += "],";
+  return jsonString;
   // Serial.print("{\"ACC\":[");
   // Serial.print(sensor->accX(), 2);
   // Serial.print(",");
@@ -170,8 +172,8 @@ std::string readIMU()
   if (myICM.dataReady())
   {
     myICM.getAGMT();
-   std::string sharedBuffer = printScaledAGMT(&myICM);
-   return sharedBuffer;
+    std::string sharedBuffer = printScaledAGMT(&myICM);
+    return sharedBuffer;
   }
   else
   {
