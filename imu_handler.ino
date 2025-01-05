@@ -123,11 +123,11 @@ std::string printScaledAGMT(ICM_20948_SPI *sensor)
 {
   std::string jsonString{};
   jsonString = "{\"ACC\":[";
-  jsonString += std::to_string(sensor->accX());
+  jsonString += std::to_string(sensor->accX() * 0.00981);
   jsonString += ",";
-  jsonString += std::to_string(sensor->accY());
+  jsonString += std::to_string(sensor->accY() * 0.00981);
   jsonString += ",";
-  jsonString += std::to_string(sensor->accZ());
+  jsonString += std::to_string(sensor->accZ() * 0.00981);
   jsonString += "],\"GYR\":[";
   jsonString += std::to_string(sensor->gyrX());
   jsonString += ",";
@@ -144,28 +144,6 @@ std::string printScaledAGMT(ICM_20948_SPI *sensor)
   jsonString += std::to_string(sensor->temp());
   jsonString += "],";
   return jsonString;
-  // Serial.print("{\"ACC\":[");
-  // Serial.print(sensor->accX(), 2);
-  // Serial.print(",");
-  // Serial.print(sensor->accY(), 2);
-  // Serial.print(",");
-  // Serial.print(sensor->accZ(), 2);
-  // Serial.print("],\"GYR\":[");
-  // Serial.print(sensor->gyrX(), 2);
-  // Serial.print(",");
-  // Serial.print(sensor->gyrY(), 2);
-  // Serial.print(",");
-  // Serial.print(sensor->gyrZ(), 2);
-  // Serial.print("],\"MAG\":[");
-  // Serial.print(sensor->magX(), 2);
-  // Serial.print(",");
-  // Serial.print(sensor->magY(), 2);
-  // Serial.print(",");
-  // Serial.print(sensor->magZ(), 2);
-  // Serial.print("],\"TMP\":[");
-  // Serial.print(sensor->temp(), 2);
-  // Serial.print("],");
-  // // Serial.println();
 }
 std::string readIMU()
 {
