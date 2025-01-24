@@ -9,7 +9,7 @@
 
 char cmd;
 // A pair of varibles to help parse serial commands (thanks Fergs)
-int arg = 0;
+int parseArg = 0;
 int indx = 0;
 // Variable to hold an input character
 char chr;
@@ -20,7 +20,7 @@ char argv2[16];
 // The arguments converted to integers
 long arg1;
 long arg2;
-long lastMotorCommand {AUTO_STOP_INTERVAL};
+long lastMotorCommand{AUTO_STOP_INTERVAL};
 /* Clear the current command parameters */
 void resetCommand()
 {
@@ -29,7 +29,7 @@ void resetCommand()
   memset(argv2, 0, sizeof(argv2));
   arg1 = 0;
   arg2 = 0;
-  arg = 0;
+  parseArg = 0;
   indx = 0;
 }
 
@@ -78,18 +78,19 @@ int runCommand(std::string sharedBuffer)
     // Serial.println("OK");
     break;
 
-  // case READ_ENCODERS:
-  // // Serial.print("ENC:{")
-  //   // Serial.print(readEncoder(LEFT));
-  //   // Serial.print(",");
-  //   // Serial.println(readEncoder(RIGHT));
-  //   // Serial.println("}")
+    // case READ_ENCODERS:
+    // // Serial.print("ENC:{")
+    //   // Serial.print(readEncoder(LEFT));
+    //   // Serial.print(",");
+    //   // Serial.println(readEncoder(RIGHT));
+    //   // Serial.println("}")
 
-  //   break;
+    //   break;
 
   case RESET_ENCODERS:
     resetEncoders();
     resetPID();
+    resetICM();
     // Serial.println("OK");
     break;
 
@@ -135,4 +136,3 @@ int runCommand(std::string sharedBuffer)
   }
   return 0;
 }
-

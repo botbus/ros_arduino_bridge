@@ -2,7 +2,7 @@
 #define SERIAL_HANDLER_H
 
 // A pair of varibles to help parse serial commands (thanks Fergs)
-extern int arg;
+extern int parseArg;
 extern int indx;
 // Variable to hold an input character
 extern char chr;
@@ -21,5 +21,5 @@ extern long arg2;
 
 void resetCommand();
 int runCommand();
-
+void resetICM();
 #endif

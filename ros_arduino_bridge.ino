@@ -111,24 +111,18 @@ void motorIMUdriver(void *pvParameters)
   {
     std::string sharedBuffer{};
     sharedBuffer = readIMU();
-    sharedBuffer += "\"ENC\":[";
-    sharedBuffer += std::to_string(readEncoder(LEFT));
-    sharedBuffer += ",";
-    sharedBuffer += std::to_string(readEncoder(RIGHT));
-    sharedBuffer += "]}|";
+    sharedBuffer += jsonFormat("ENC", std::to_string(readEncoder(LEFT)), std::to_string(readEncoder(RIGHT)));
     Serial.flush();
     Serial.println(sharedBuffer.c_str());
     while (Serial.available() > 0)
     {
-      // Read the next character
       chr = Serial.read();
 
-      // Terminate a command with a CR
       if (chr == 13)
       {
-        if (arg == 1)
+        if (parseArg == 1)
           argv1[indx] = '\0';
-        else if (arg == 2)
+        else if (parseArg == 2)
           argv2[indx] = '\0';
         runCommand(sharedBuffer);
         resetCommand();
@@ -137,30 +131,30 @@ void motorIMUdriver(void *pvParameters)
       else if (chr == ' ')
       {
         // Step through the arguments
-        if (arg == 0)
-          arg = 1;
-        else if (arg == 1)
+        if (parseArg == 0)
+          parseArg = 1;
+        else if (parseArg == 1)
         {
           argv1[indx] = '\0';
-          arg = 2;
+          parseArg = 2;
           indx = 0;
         }
         continue;
       }
       else
       {
-        if (arg == 0)
+        if (parseArg == 0)
         {
-          // The first arg is the single-letter command
+          // The first parseArg is the single-letter command
           cmd = chr;
         }
-        else if (arg == 1)
+        else if (parseArg == 1)
         {
           // Subsequent arguments can be more than one character
           argv1[indx] = chr;
           indx++;
         }
-        else if (arg == 2)
+        else if (parseArg == 2)
         {
           argv2[indx] = chr;
           indx++;
@@ -173,10 +167,10 @@ void motorIMUdriver(void *pvParameters)
       updatePID();
       nextPID += PID_INTERVAL;
     }
-    // Check to see if we have exceeded the auto-stop interval
+
     if ((millis() - lastMotorCommand) > AUTO_STOP_INTERVAL)
     {
-     
+
       setMotorSpeeds(0, 0);
       moving = 0;
     }
