@@ -59,63 +59,39 @@ int runCommand()
 
   case ANALOG_WRITE:
     analogWrite(arg1, arg2);
-    // Serial.println("OK");
     break;
 
   case DIGITAL_WRITE:
-    if (arg2 == 0)
-      digitalWrite(arg1, LOW);
-    else if (arg2 == 1)
-      digitalWrite(arg1, HIGH);
-    // Serial.println("OK");
+    digitalWrite(arg1, arg2 ? HIGH : LOW);
     break;
 
   case PIN_MODE:
-    if (arg2 == 0)
-      pinMode(arg1, INPUT);
-    else if (arg2 == 1)
-      pinMode(arg1, OUTPUT);
-    // Serial.println("OK");
+    pinMode(arg1, (arg2 == 0) ? INPUT : OUTPUT);
     break;
-
-    // case READ_ENCODERS:
-    // // Serial.print("ENC:{")
-    //   // Serial.print(readEncoder(LEFT));
-    //   // Serial.print(",");
-    //   // Serial.println(readEncoder(RIGHT));
-    //   // Serial.println("}")
-
-    //   break;
 
   case RESET_ENCODERS:
     resetEncoders();
-    resetPID();
-    resetICM();
-    // Serial.println("OK");
+    // resetPID();
     break;
 
   case MOTOR_SPEEDS:
-    /* Reset the auto stop timer */
-    lastMotorCommand = millis();
-    if (arg1 == 0 && arg2 == 0)
-    {
-      setMotorSpeeds(0, 0);
-      resetPID();
-      moving = 0;
-    }
-    else
-      moving = 1;
-    leftPID.TargetTicksPerFrame = arg1;
-    rightPID.TargetTicksPerFrame = arg2;
-    // Serial.println("OK");
+    // lastMotorCommand = millis();
+    // if (arg1 == 0 && arg2 == 0)
+    // {
+    //   setMotorSpeeds(0, 0);
+    //   resetPID();
+    //   moving = 0;
+    // }
+    // else
+    //   moving = 1;
+    left.setpoint = arg1;
+    right.setpoint = arg2;
     break;
   case MOTOR_RAW_PWM:
-    /* Reset the auto stop timer */
     lastMotorCommand = millis();
-    resetPID();
-    moving = 0; // Sneaky way to temporarily disable the PID
+    // resetPID();
+    // moving = 0; // Sneaky way to temporarily disable the PID
     setMotorSpeeds(arg1, arg2);
-    // Serial.println("OK");
     break;
   case UPDATE_PID:
     while ((str = strtok_r(p, ":", &p)) != NULL)
@@ -123,11 +99,9 @@ int runCommand()
       pid_args[i] = atoi(str);
       i++;
     }
-    Kp = pid_args[0];
-    Kd = pid_args[1];
-    Ki = pid_args[2];
-    Ko = pid_args[3];
-    // Serial.println("OK");
+
+    rightWheelPID.SetTunings(pid_args[0], pid_args[1], pid_args[2]); // pid
+    leftWheelPID.SetTunings(pid_args[0], pid_args[1], pid_args[2]);
     break;
 
   default:

@@ -124,9 +124,9 @@ std::string readIMU()
     {
         if ((data.header & DMP_header_bitmap_Accel) > 0) // Check for Accel
         {
-            double x = (double)data.Raw_Accel.Data.X / 32768.0f * 4 * 9.80665; // Extract the raw accelerometer data
-            double y = (double)data.Raw_Accel.Data.Y / 32768.0f * 4 * 9.80665;
-            double z = (double)data.Raw_Accel.Data.Z / 32768.0f * 4 * 9.80665;
+            float x = (float)data.Raw_Accel.Data.X / 32768.0f * 4 * 9.80665; // Extract the raw accelerometer data
+            float y = (float)data.Raw_Accel.Data.Y / 32768.0f * 4 * 9.80665;
+            float z = (float)data.Raw_Accel.Data.Z / 32768.0f * 4 * 9.80665;
 
             jsonString += jsonFormat("ACC", x, y, z);
         }
@@ -142,10 +142,10 @@ std::string readIMU()
         if ((data.header & DMP_header_bitmap_Quat9) > 0) // We have asked for orientation data so we should receive Quat9
         {
 
-            double q1 = ((double)data.Quat9.Data.Q1) / 1073741824.0;
-            double q2 = ((double)data.Quat9.Data.Q2) / 1073741824.0;
-            double q3 = ((double)data.Quat9.Data.Q3) / 1073741824.0;
-            double q0 = sqrt(1.0 - ((q1 * q1) + (q2 * q2) + (q3 * q3)));
+            float q1 = ((float)data.Quat9.Data.Q1) / 1073741824.0;
+            float q2 = ((float)data.Quat9.Data.Q2) / 1073741824.0;
+            float q3 = ((float)data.Quat9.Data.Q3) / 1073741824.0;
+            float q0 = sqrt(1.0 - ((q1 * q1) + (q2 * q2) + (q3 * q3)));
 
             jsonString += jsonFormat("QUAT", q0, q1, q2, q3);
         }

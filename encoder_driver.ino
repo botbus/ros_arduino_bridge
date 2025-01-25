@@ -20,14 +20,13 @@ bool resetEncoderPos{false};
 // below can be changed, but should be PORTC pins
 const int RIGHT_ENC_PIN_A{3}; // pin A4
 const int RIGHT_ENC_PIN_B{2}; // pin A5
-void initMotorPins()
-{
-  pinMode(LEFT_ENC_PIN_A, INPUT_PULLUP);
-  pinMode(RIGHT_ENC_PIN_A, INPUT_PULLUP);
-  pinMode(LEFT_ENC_PIN_B, INPUT_PULLUP);
-  pinMode(RIGHT_ENC_PIN_B, INPUT_PULLUP);
-
-}
+// void initMotorPins()
+// {
+//   pinMode(LEFT_ENC_PIN_A, INPUT_PULLUP);
+//   pinMode(RIGHT_ENC_PIN_A, INPUT_PULLUP);
+//   pinMode(LEFT_ENC_PIN_B, INPUT_PULLUP);
+//   pinMode(RIGHT_ENC_PIN_B, INPUT_PULLUP);
+// }
 
 void wheelENC(void *pvParameters)
 {
@@ -92,15 +91,13 @@ void wheelENC(void *pvParameters)
 
     if (prevVal_right != newVal_right && newVal_right == 3)
     {
-       if (clockState_right == 0b1011 || clockState_right == 0b1101 || clockState_right == 0b1110 || clockState_right == 0b1111)
+      if (clockState_right == 0b1011 || clockState_right == 0b1101 || clockState_right == 0b1110 || clockState_right == 0b1111)
       {
         right_enc_pos.fetch_add(1);
-
       }
       if (counterClockState_right == 0b1011 || counterClockState_right == 0b1101 || counterClockState_right == 0b1110 || counterClockState_right == 0b1111)
       {
         right_enc_pos.fetch_sub(1);
-
       }
 
       clockState_right = 0;
@@ -109,15 +106,13 @@ void wheelENC(void *pvParameters)
 
     if (prevVal_left != newVal_left && newVal_left == 3)
     {
-       if (clockState_left == 0b1011 || clockState_left == 0b1101 || clockState_left == 0b1110 || clockState_left == 0b1111)
+      if (clockState_left == 0b1011 || clockState_left == 0b1101 || clockState_left == 0b1110 || clockState_left == 0b1111)
       {
         left_enc_pos.fetch_add(1);
-
       }
       if (counterClockState_left == 0b1011 || counterClockState_left == 0b1101 || counterClockState_left == 0b1110 || counterClockState_left == 0b1111)
       {
         left_enc_pos.fetch_sub(1);
-
       }
 
       clockState_left = 0;
@@ -125,6 +120,7 @@ void wheelENC(void *pvParameters)
     }
     prevVal_right = newVal_right;
     prevVal_left = newVal_left;
+
     // vTaskDelay(ENCDelay);
   }
 }

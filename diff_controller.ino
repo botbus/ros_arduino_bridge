@@ -1,107 +1,87 @@
-/* Functions and type-defs for PID control.
+// /* Functions and type-defs for PID control.
 
-   Taken mostly from Mike Ferguson's ArbotiX code which lives at:
-   
-   http://vanadium-ros-pkg.googlecode.com/svn/trunk/arbotix/
-*/
-#include "include/commands.h"
-#include "include/encoder_driver.h"
-#include "include/motor_driver.h"
-#include "include/diff_controller.h"
-#include "include/setup_definitions.h"
-/* PID Parameters */
-int Kp = 20;
-int Kd = 12;
-int Ki = 5;
-int Ko = 50;
-SetPointInfo leftPID;
-SetPointInfo rightPID;
-unsigned char moving = 0; // is the base in motion?
-/*
-* Initialize PID variables to zero to prevent startup spikes
-* when turning PID on to start moving
-* In particular, assign both Encoder and PrevEnc the current encoder value
-* See http://brettbeauregard.com/blog/2011/04/improving-the-beginner%E2%80%99s-pid-initialization/
-* Note that the assumption here is that PID is only turned on
-* when going from stop to moving, that's why we can init everything on zero.
-*/
-void resetPID(){
-   leftPID.TargetTicksPerFrame = 0.0;
-   leftPID.Encoder = readEncoder(LEFT);
-   leftPID.PrevEnc = leftPID.Encoder;
-   leftPID.output = 0;
-   leftPID.PrevInput = 0;
-   leftPID.ITerm = 0;
+//    Taken mostly from Mike Ferguson's ArbotiX code which lives at:
 
-   rightPID.TargetTicksPerFrame = 0.0;
-   rightPID.Encoder = readEncoder(RIGHT);
-   rightPID.PrevEnc = rightPID.Encoder;
-   rightPID.output = 0;
-   rightPID.PrevInput = 0;
-   rightPID.ITerm = 0;
-}
+//    http://vanadium-ros-pkg.googlecode.com/svn/trunk/arbotix/
+// */
+// #include "include/commands.h"
+// #include "include/encoder_driver.h"
+// #include "include/motor_driver.h"
+// #include "include/diff_controller.h"
+// #include "include/setup_definitions.h"
+// /* PID Parameters */
+// int Kp = 20;
+// int Kd = 12;
+// int Ki = 5;
+// int Ko = 50;
+// configPID leftPID;
+// configPID rightPID;
+// unsigned char moving = 0; // is the base in motion?
 
-/* PID routine to compute the next motor commands */
-void doPID(SetPointInfo * p) {
-  long Perror;
-  long output;
-  int input;
+// /*a*
+//  * Initialize PID variables to zero to prevent startup spikes
+//  * when turning PID on to start moving
+//  *
+//  * In particular, assign both currentEnc and PrevEnc the current encoder value
+//  * See http://brettbeauregard.com/blog/2011/04/improving-the-beginner%E2%80%99s-pid-initialization/
+//  *
+//  * Note that the assumption here is that PID is only turned on
+//  * when going from stop to moving, that's why we can init everything on zero.
+//  *
+//  * @note: This function is called when going from stop to moving
+//  */
+// void resetPID()
+// {
+//   leftPID.targetVal = 0.0;
+//   leftPID.currentEnc = readEncoder(LEFT);
+//   leftPID.PrevEnc = leftPID.currentEnc;
+//   leftPID.output = 0;
+//   leftPID.PrevInput = 0;
+//   leftPID.Iterm = 0;
+//   leftPID.Pterm = 0;
+//   leftPID.Dterm = 0;
+//   rightPID.targetVal = 0.0;
+//   rightPID.currentEnc = readEncoder(RIGHT);
+//   rightPID.PrevEnc = rightPID.currentEnc;
+//   rightPID.output = 0;
+//   rightPID.PrevInput = 0;
+//   rightPID.Iterm = 0;
+//   rightPID.Pterm = 0;
+//   rightPID.Dterm = 0;
+// }
 
-  //Perror = p->TargetTicksPerFrame - (p->Encoder - p->PrevEnc);
-  input = p->Encoder - p->PrevEnc;
-  Perror = p->TargetTicksPerFrame - input;
+// /* PID routine to compute the next motor commands */
+// void doPID(configPID *p)
+// {
+//   int input = p->currentEnc - p->PrevEnc;
+//   int Perror = p->targetVal - input;
+//   int output = (Kp * Perror - Kd * (input - p->PrevInput) + p->Iterm) / Ko;
+//   output = constrain(output, -MAX_PWM, MAX_PWM);
 
+//   p->PrevEnc = p->currentEnc;
+//   p->Iterm += Ki * Perror;
+//   p->output = output;
+//   p->PrevInput = input;
+// }
 
-  /*
-  * Avoid derivative kick and allow tuning changes,
-  * see http://brettbeauregard.com/blog/2011/04/improving-the-beginner%E2%80%99s-pid-derivative-kick/
-  * see http://brettbeauregard.com/blog/2011/04/improving-the-beginner%E2%80%99s-pid-tuning-changes/
-  */
-  //output = (Kp * Perror + Kd * (Perror - p->PrevErr) + Ki * p->Ierror) / Ko;
-  // p->PrevErr = Perror;
-  output = (Kp * Perror - Kd * (input - p->PrevInput) + p->ITerm) / Ko;
-  p->PrevEnc = p->Encoder;
+// /* Read the encoder values and call the PID routine */
+// void updatePID()
+// {
+//   if (!moving)
+//   {
+//     if (leftPID.PrevInput != 0 || rightPID.PrevInput != 0)
+//       resetPID();
+//     return;
+//   }
 
-  output += p->output;
-  // Accumulate Integral error *or* Limit output.
-  // Stop accumulating when output saturates
-  if (output >= MAX_PWM)
-    output = MAX_PWM;
-  else if (output <= -MAX_PWM)
-    output = -MAX_PWM;
-  else
-  /*
-  * allow turning changes, see http://brettbeauregard.com/blog/2011/04/improving-the-beginner%E2%80%99s-pid-tuning-changes/
-  */
-    p->ITerm += Ki * Perror;
+//   /* Read the encoders */
+//   leftPID.currentEnc = readEncoder(LEFT);
+//   rightPID.currentEnc = readEncoder(RIGHT);
 
-  p->output = output;
-  p->PrevInput = input;
-}
+//   /* Compute PID update for each motor */
+//   doPID(&rightPID);
+//   doPID(&leftPID);
 
-/* Read the encoder values and call the PID routine */
-void updatePID() {
-  /* Read the encoders */
-  leftPID.Encoder = readEncoder(LEFT);
-  rightPID.Encoder = readEncoder(RIGHT);
-  
-  /* If we're not moving there is nothing more to do */
-  if (!moving){
-    /*
-    * Reset PIDs once, to prevent startup spikes,
-    * see http://brettbeauregard.com/blog/2011/04/improving-the-beginner%E2%80%99s-pid-initialization/
-    * PrevInput is considered a good proxy to detect
-    * whether reset has already happened
-    */
-    if (leftPID.PrevInput != 0 || rightPID.PrevInput != 0) resetPID();
-    return;
-  }
-
-  /* Compute PID update for each motor */
-  doPID(&rightPID);
-  doPID(&leftPID);
-
-  /* Set the motor speeds accordingly */
-  setMotorSpeeds(leftPID.output, rightPID.output);
-}
-
+//   /* Set the motor speeds accordingly */
+//   setMotorSpeeds(leftPID.output, rightPID.output);
+// }
