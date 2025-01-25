@@ -81,7 +81,7 @@ void setup()
     ;
   delay(1000);
   Serial.println("starting system");
-  initIMU();
+
   initMotorPins();
 
   xSemaphore = xSemaphoreCreateMutexStatic(&xMutexBuffer);
@@ -106,14 +106,18 @@ void motorIMUdriver(void *pvParameters)
   const TickType_t yDelay = 100 / portTICK_PERIOD_MS;
   initMotorController();
   resetPID();
+  initIMU();
   delay(100);
   while (1)
   {
     std::string sharedBuffer{};
     sharedBuffer = readIMU();
-    sharedBuffer += jsonFormat("ENC", std::to_string(readEncoder(LEFT)), std::to_string(readEncoder(RIGHT)));
+    sharedBuffer += jsonFormat("ENC", readEncoder(LEFT), readEncoder(RIGHT));
+    sharedBuffer.pop_back();
+    sharedBuffer += "}|";
     Serial.flush();
     Serial.println(sharedBuffer.c_str());
+    // Serial.println("hello");
     while (Serial.available() > 0)
     {
       chr = Serial.read();
@@ -124,7 +128,7 @@ void motorIMUdriver(void *pvParameters)
           argv1[indx] = '\0';
         else if (parseArg == 2)
           argv2[indx] = '\0';
-        runCommand(sharedBuffer);
+        runCommand();
         resetCommand();
       }
       // Use spaces to delimit parts of the command

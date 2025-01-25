@@ -34,7 +34,7 @@ void resetCommand()
 }
 
 /* Run a command.  Commands are defined in commands.h */
-int runCommand(std::string sharedBuffer)
+int runCommand()
 {
   int i = 0;
   char *p = argv1;
