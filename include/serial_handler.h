@@ -1,25 +1,42 @@
 #ifndef SERIAL_HANDLER_H
 #define SERIAL_HANDLER_H
+#include <string>
+#include <cstdlib> // for strtok_r
+class SerialHandler
+{
 
-// A pair of varibles to help parse serial commands (thanks Fergs)
-extern int parseArg;
-extern int indx;
-// Variable to hold an input character
-extern char chr;
-extern bool run_left_ISR;
-extern bool run_right_ISR;
-// Variable to hold the current single-character command
-extern char cmd;
+private:
+    char cmd;
+    int parseArg = 0;
+    int indx = 0;
+    char chr;
+    char argv1[16];
+    char argv2[16];
+    long arg1;
+    long arg2;
 
-// Character arrays to hold the first and second arguments
-extern char argv1[16];
-extern char argv2[16];
+    int MAN{0};
+    int AUTO{1};
+    double MAX_PWM{255.0};
+    double MIN_PWM{0.0};
+    long previousTime;
+    int PID_RATE{20};
+    bool debug = false;
+    bool next = false;
+    double slowPID[3] ={0.5, 0.6, 0.01};
+    double midPID[3] = {0.7, 0.6, 0.02};
+    double fastPID[3] ={1.6, 2.0, 0.085};
 
-// The arguments converted to integers
-extern long arg1;
-extern long arg2;
 
-void resetCommand();
-int runCommand();
-void resetICM();
+
+public:
+    SerialHandler();
+    void resetCommand();
+    int runCommand();
+    void resetPID();
+    void read();
+    void doPID();
+    double encToPWM(double input, double &prevInput, long &prevTime, int encoderTicksPerRev);
+    // void testPID();
+};
 #endif

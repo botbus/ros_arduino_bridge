@@ -1,43 +1,37 @@
-/***************************************************************
-   Motor driver definitions
 
-   Add a "#elif defined" block to this file to include support
-   for a particular motor driver.  Then add the appropriate
-   #define near the top of the main ROSArduinoBridge.ino file.
-
-   *************************************************************/
-
-#include "include/commands.h"
 #include "include/motor_driver.h"
-#include "include/diff_controller.h"
 
-constexpr int RIGHT_MOTOR_BACKWARD{7};
-constexpr int LEFT_MOTOR_BACKWARD{9};
-constexpr int RIGHT_MOTOR_FORWARD{8};
-constexpr int LEFT_MOTOR_FORWARD{10};
-constexpr int RIGHT_MOTOR_ENABLE{6};
-constexpr int LEFT_MOTOR_ENABLE{11};
-
-void initMotorController()
+MotorDriver::MotorDriver()
+    : rightMotorBackward_(7),
+      leftMotorBackward_(9),
+      rightMotorForward_(8),
+      leftMotorForward_(10),
+      rightMotorEnable_(6),
+      leftMotorEnable_(11)
 {
-  digitalWrite(RIGHT_MOTOR_ENABLE, HIGH);
-  digitalWrite(LEFT_MOTOR_ENABLE, HIGH);
+  digitalWrite(rightMotorEnable_, HIGH);
+  digitalWrite(leftMotorEnable_, HIGH);
 }
 
-void setMotorSpeed(int i, int spd)
+void MotorDriver::setMotorSpeed(int i, double spd, bool reverse)
 {
-  unsigned char reverse = (spd < 0);
+  // unsigned char reverse = (spd < 0);
   spd = constrain(abs(spd), 0, 255);
 
-  int forwardPin = (i == LEFT) ? LEFT_MOTOR_FORWARD : RIGHT_MOTOR_FORWARD;
-  int backwardPin = (i == LEFT) ? LEFT_MOTOR_BACKWARD : RIGHT_MOTOR_BACKWARD;
-
+  int forwardPin = (i == LEFT) ? leftMotorForward_ : rightMotorForward_;
+  int backwardPin = (i == LEFT) ? leftMotorBackward_ : rightMotorBackward_;
+  spd = static_cast<int>(spd);
   analogWrite(forwardPin, reverse ? 0 : spd);
   analogWrite(backwardPin, reverse ? spd : 0);
 }
 
-void setMotorSpeeds(int leftSpeed, int rightSpeed)
+void MotorDriver::setMotorSpeeds(double leftSpeed, double rightSpeed, bool reverseLeft, bool reverseRight)
 {
-  setMotorSpeed(LEFT, leftSpeed);
-  setMotorSpeed(RIGHT, rightSpeed);
+  // Serial.print("Speed:   ");
+  // Serial.print(leftSpeed, 0);
+  // Serial.print(" ");
+  // Serial.println(rightSpeed, 0);
+
+  setMotorSpeed(LEFT, leftSpeed, reverseLeft);
+  setMotorSpeed(RIGHT, rightSpeed, reverseRight);
 }

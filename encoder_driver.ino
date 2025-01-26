@@ -1,5 +1,4 @@
 #include "include/commands.h"
-#include "include/diff_controller.h"
 #include "include/encoder_driver.h"
 
 std::atomic<long> left_enc_pos{0};
@@ -10,14 +9,9 @@ static const int ENC_STATES[4][4] = {{0, -1, 1, 2},
                                      {2, 1, -1, 0}};
 
 const TickType_t ENCDelay = 1 / portTICK_PERIOD_MS;
-
-bool run_left_ISR{false};
-bool run_right_ISR{false};
-
-const int LEFT_ENC_PIN_A{4}; // pin 2
-const int LEFT_ENC_PIN_B{5}; // pin 3
 bool resetEncoderPos{false};
-// below can be changed, but should be PORTC pins
+const int LEFT_ENC_PIN_A{4};  // pin 2
+const int LEFT_ENC_PIN_B{5};  // pin 3
 const int RIGHT_ENC_PIN_A{3}; // pin A4
 const int RIGHT_ENC_PIN_B{2}; // pin A5
 // void initMotorPins()

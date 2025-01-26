@@ -4,15 +4,20 @@
 
 #ifndef MOTOR_DRIVER_H
 #define MOTOR_DRIVER_H
-extern const int RIGHT_MOTOR_BACKWARD;
-extern const int LEFT_MOTOR_BACKWARD;
-extern const int RIGHT_MOTOR_FORWARD;
-extern const int LEFT_MOTOR_FORWARD;
-extern const int RIGHT_MOTOR_ENABLE;
-extern const int LEFT_MOTOR_ENABLE;
+#include "Arduino.h"
+class MotorDriver
+{
+private:
+   const int rightMotorBackward_;
+   const int leftMotorBackward_;
+   const int rightMotorForward_;
+   const int leftMotorForward_;
+   const int rightMotorEnable_;
+   const int leftMotorEnable_;
 
-void initMotorController();
-void setMotorSpeed(int i, int spd);
-void setMotorSpeeds(int leftSpeed, int rightSpeed);
-
+public:
+   MotorDriver();
+   void setMotorSpeed(int i, double spd, bool reverse);
+   void setMotorSpeeds(double leftSpeed, double rightSpeed, bool reverseLeft, bool reverseRight);
+};
 #endif
