@@ -45,12 +45,11 @@ void initIMU()
 
     success &= (myICM.enableDMPSensor(INV_ICM20948_SENSOR_ORIENTATION) == ICM_20948_Stat_Ok);
     success &= (myICM.enableDMPSensor(INV_ICM20948_SENSOR_RAW_GYROSCOPE) == ICM_20948_Stat_Ok);
-    // success &= (myICM.enableDMPSensor(INV_ICM20948_SENSOR_RAW_ACCELEROMETER) == ICM_20948_Stat_Ok);
+    success &= (myICM.enableDMPSensor(INV_ICM20948_SENSOR_RAW_ACCELEROMETER) == ICM_20948_Stat_Ok);
 
     success &= (myICM.setDMPODRrate(DMP_ODR_Reg_Quat9, 0) == ICM_20948_Stat_Ok);
-    // success &= (myICM.setDMPODRrate(DMP_ODR_Reg_Accel, 0) == ICM_20948_Stat_Ok);
+    success &= (myICM.setDMPODRrate(DMP_ODR_Reg_Accel, 0) == ICM_20948_Stat_Ok);
     success &= (myICM.setDMPODRrate(DMP_ODR_Reg_Gyro, 0) == ICM_20948_Stat_Ok);
-    // success &= (myICM.setDMPODRrate(DMP_ODR_Reg_Gyro_Calibr, 0) == ICM_20948_Stat_Ok);
 
     success &= (myICM.enableFIFO() == ICM_20948_Stat_Ok);
     success &= (myICM.enableDMP() == ICM_20948_Stat_Ok);
@@ -86,32 +85,91 @@ std::string jsonFormat(const std::string &name, double value1, double value2, do
     oss << "\"" << name << "\":[" << value1 << "," << value2 << "," << value3 << "," << value4 << "],";
     return oss.str();
 }
+class IMUFilter
+{
+public:
+    IMUFilter(double alpha, double bias_alpha, double stationary_threshold)
+        : alpha(alpha), bias_alpha(bias_alpha), stationary_threshold(stationary_threshold),
+          filtered_accel(0.0), bias(0.0), initialized(false) {}
 
+    double filter(double raw_accel)
+    {
+        // Apply low-pass filtering
+        if (!initialized)
+        {
+            filtered_accel = raw_accel;
+            bias = raw_accel; // Initialize bias to first reading
+            initialized = true;
+        }
+        else
+        {
+            filtered_accel = alpha * raw_accel + (1 - alpha) * filtered_accel;
+        }
+
+        // Detect stationary state
+        if (std::abs(filtered_accel) < stationary_threshold)
+        {
+            // Update bias gradually
+            bias = bias_alpha * filtered_accel + (1 - bias_alpha) * bias;
+        }
+
+        // Return bias-corrected acceleration
+        return filtered_accel - bias;
+    }
+
+private:
+    double alpha;                // Low-pass filter strength
+    double bias_alpha;           // Bias adaptation rate
+    double stationary_threshold; // Threshold for detecting no movement
+
+    double filtered_accel; // Smoothed acceleration reading
+    double bias;           // Estimated bias
+    bool initialized;      // First reading check
+};
 std::string readIMU()
 {
     icm_20948_DMP_data_t data;
     myICM.readDMPdataFromFIFO(&data);
+    static double alpha = 0.075;                 // Low-pass filter coefficient (0.1 = strong smoothing)
+    static double bias_alpha = 0.01;           // Bias adaptation speed (lower = slower adaptation)
+    static double stationary_threshold = 0.2; // Threshold to detect no movement
 
     if ((myICM.status == ICM_20948_Stat_Ok) || (myICM.status == ICM_20948_Stat_FIFOMoreDataAvail)) // Was valid data available?
     {
         std::string jsonString{"{"};
-        // if ((data.header & DMP_header_bitmap_Accel) > 0) // Check for Accel
-        // {
-        //     double x = (double)data.Raw_Accel.Data.X / 32768.0f * 4 * 9.80665; // Extract the raw accelerometer data
-        //     double y = (double)data.Raw_Accel.Data.Y / 32768.0f * 4 * 9.80665;
-        //     double z = (double)data.Raw_Accel.Data.Z / 32768.0f * 4 * 9.80665;
+        if ((data.header & DMP_header_bitmap_Accel) > 0) // Check for Accel
+        {
+            double x = (double)data.Raw_Accel.Data.X / 32768.0f * 4 * 9.80665; // Extract the raw accelerometer data
+            double y = (double)data.Raw_Accel.Data.Y / 32768.0f * 4 * 9.80665;
+            double z = (double)data.Raw_Accel.Data.Z / 32768.0f * 4 * 9.80665;
+            
+            static IMUFilter accx_filter(alpha, bias_alpha, stationary_threshold);
+            static IMUFilter accy_filter(alpha, bias_alpha, stationary_threshold);
+            static IMUFilter accz_filter(alpha, bias_alpha, stationary_threshold);
 
-        //     jsonString += jsonFormat("ACC", x, y, z);
-        // }
+            double filtered_x = accx_filter.filter(x);
+            double filtered_y = accy_filter.filter(y);
+            double filtered_z = accz_filter.filter(z);
+
+            jsonString += jsonFormat("ACC", filtered_x, filtered_y, filtered_z);
+        }
 
         if ((data.header & DMP_header_bitmap_Gyro) > 0) // Check for Gyro
         {
-            // double x = (double)data.Raw_Gyro.Data.X / 32768.0f * 2000 * M_PI / 180; // Extract the raw gyro data
-            // double y = (double)data.Raw_Gyro.Data.Y / 32768.0f * 2000 * M_PI / 180;
-            double x{};
-            double y{};
+            double x = (double)data.Raw_Gyro.Data.X / 32768.0f * 2000 * M_PI / 180; // Extract the raw gyro data
+            double y = (double)data.Raw_Gyro.Data.Y / 32768.0f * 2000 * M_PI / 180;
             double z = (double)data.Raw_Gyro.Data.Z / 32768.0f * 2000 * M_PI / 180;
-            jsonString += jsonFormat("GYR", x, y, z);
+
+            static IMUFilter gyrx_filter(alpha, bias_alpha, stationary_threshold);
+            static IMUFilter gyry_filter(alpha, bias_alpha, stationary_threshold);
+            static IMUFilter gyrz_filter(alpha, bias_alpha, stationary_threshold);
+
+            double filtered_x = gyrx_filter.filter(x);
+            double filtered_y = gyry_filter.filter(y);
+            double filtered_z = gyrz_filter.filter(z);
+
+            jsonString += jsonFormat("GYR", filtered_x, filtered_y, filtered_z);
+            // jsonString += jsonFormat("GYR", x, y, z);
         }
 
         if ((data.header & DMP_header_bitmap_Quat9) > 0) // We have asked for orientation data so we should receive Quat9

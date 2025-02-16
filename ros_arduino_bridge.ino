@@ -51,7 +51,7 @@
 #include "include/serial_handler.h"
 #include "include/motor_driver.h"
 #include "include/encoder_driver.h"
-//#define TEST_MODE
+// #define TEST_MODE
 SerialHandler myserial;
 MotorDriver mymotor;
 
@@ -59,10 +59,12 @@ void setup()
 {
   Serial.begin(BAUDRATE);
   while (!Serial)
+  {
     ;
-  delay(1000);
+    delay(100);
+  }
+  
   Serial.println("starting system");
-
   xSemaphore = xSemaphoreCreateMutexStatic(&xMutexBuffer);
   motorIMUTask = xTaskCreateStatic(motorIMUdriver, "motorIMUdriver", STACK_SIZE, NULL, configMAX_PRIORITIES - 1, xStack_motorIMU, &xTaskBuffer_motorIMU);
   vTaskCoreAffinitySet(motorIMUTask, 1 << 0);
